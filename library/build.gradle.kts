@@ -7,13 +7,13 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
-group = "io.github.kotlin"
+group = "io.github.redflitzi"
 version = "1.0.0"
 
 kotlin {
     jvm()
     androidLibrary {
-        namespace = "org.jetbrains.kotlinx.multiplatform.library.template"
+        namespace = "io.github.redflitzi.compactdecimals"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -55,10 +55,10 @@ mavenPublishing {
     coordinates(group.toString(), "library", version.toString())
 
     pom {
-        name = "My library"
-        description = "A library."
-        inceptionYear = "2024"
-        url = "https://github.com/kotlin/multiplatform-library-template/"
+        name = "CompactDecimals Library"
+        description = "Multiplatform CompactDecimals library."
+        inceptionYear = "2025"
+        url = "https://github.com/redflitzi/CompactDecimals/"
         licenses {
             license {
                 name = "XXX"

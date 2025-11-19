@@ -1,4 +1,4 @@
-package io.github.kotlin.fibonacci
+package io.github.redflitzi.compactdecimals
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class JvmFibiTest {
 
     @Test
-    fun `test 3rd element`() {
+    fun test3rdElement() {
         assertEquals(5, generateFibi().take(3).last())
     }
 }
