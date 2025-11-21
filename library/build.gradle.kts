@@ -13,6 +13,9 @@ group = "io.github.redflitzi"
 version = "1.0.0"
 
 kotlin {
+    // for strict mode
+    explicitApi()
+
     jvm()
     androidLibrary {
         namespace = "io.github.redflitzi.compactdecimals"
@@ -38,15 +41,14 @@ kotlin {
     iosSimulatorArm64()
     linuxX64()
 
-    /*
-    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 
     wasmJs {
         browser()
         // ...
         binaries.executable()
     }
-    */
+
     js {
         browser {
         }
@@ -63,13 +65,11 @@ kotlin {
             implementation(libs.kotlin.test)
         }
 
-        /*
         val wasmJsMain by getting {
             dependencies {
                 // Wasm-specific dependencies
             }
         }
-        */
 
     }
 }
