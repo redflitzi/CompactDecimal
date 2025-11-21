@@ -2,9 +2,11 @@ import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
+    // alias(libs.plugins.kotlinMultiplatform)
+    kotlin("multiplatform") version "2.2.21"
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.vanniktech.mavenPublish)
+    // id("org.jetbrains.kotlin.kapt")
 }
 
 group = "io.github.redflitzi"
@@ -36,6 +38,22 @@ kotlin {
     iosSimulatorArm64()
     linuxX64()
 
+    /*
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+
+    wasmJs {
+        browser()
+        // ...
+        binaries.executable()
+    }
+    */
+    js {
+        browser {
+        }
+        binaries.executable()
+    }
+
+
     sourceSets {
         commonMain.dependencies {
             //put your multiplatform dependencies here
@@ -44,6 +62,15 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+        /*
+        val wasmJsMain by getting {
+            dependencies {
+                // Wasm-specific dependencies
+            }
+        }
+        */
+
     }
 }
 
