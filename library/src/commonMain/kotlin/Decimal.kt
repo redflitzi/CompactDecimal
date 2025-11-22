@@ -3,7 +3,7 @@ package io.github.redflitzi.compactdecimals
 import kotlin.math.abs
 //import kotlin.reflect.jvm.jvmName
 
-public open class Decimal {
+public open class Decimal : Comparable<Decimal> {
 
     // 64bit long plus 32 Bit exp:
 
@@ -155,6 +155,26 @@ fun shiftmult: mult mit 10^shift
 
  */
 
+    override operator fun compareTo(other: Decimal): Int {
+        var thisdecimalplaces = this.decimalplaces
+        var thatdecimalplaces = other.decimalplaces
+        var thismantissa = this.mantissa
+        var thatmantissa = other.mantissa
+        // error handling still missing!
+        while (thisdecimalplaces < thatdecimalplaces) {
+            thismantissa *= 10
+            thisdecimalplaces++
+        }
+        while (thatdecimalplaces < thisdecimalplaces) {
+            thatmantissa *= 10
+            thatdecimalplaces++
+        }
+        return when {
+            (thismantissa > thatmantissa) -> 1
+            (thismantissa < thatmantissa) -> -1
+            else -> 0
+        }
+    }
 
     /******************  Constructors  *******************/
 
