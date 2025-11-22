@@ -182,13 +182,11 @@ fun shiftmult: mult mit 10^shift
 
     public constructor (inputstr: String) {
 
-        val intpartpattern = """(?<intg>[+-]?\d*)(?:\.(?<fract>\d*))?"""
-        val exppartpattern = """(?:[Ee](?<exp>[+-]?\d+))?"""
-        val decimalNumberPattern = intpartpattern+exppartpattern
+        val decimalNumberPattern = """(?<intg>[+-]?\d*)(?:\.(?<fract>\d*))?(?:[Ee](?<exp>[+-]?\d+))?"""
         val decimalNumberRegex = Regex(decimalNumberPattern)
 
         val match = decimalNumberRegex.matchEntire(inputstr) ?: return
-        // will call this(0L,0)
+        // will automatically call this(0L,0)
 
         val expn = (match.groups["exp"]?.value ?: "0").toInt()
 
@@ -206,7 +204,7 @@ fun shiftmult: mult mit 10^shift
         if (mantString in listOf("+","- ", "")) mantString +="0"
         mantissa = mantString.toLong()
         decimalplaces = decimPlcs - tens
-
+        normalize()
     }
 
     public constructor (input:Float): this(input.toString())
