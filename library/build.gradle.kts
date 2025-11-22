@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+//import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -12,17 +12,24 @@ plugins {
 group = "io.github.redflitzi"
 version = "1.0.0"
 
+//defaultConfig {
+//    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//}
+
 kotlin {
     // for strict mode
     explicitApi()
 
+    // targets
     jvm()
-    androidLibrary {
+    //@Suppress("UnstableApiUsage")
+    // androidLibrary {
+    android {
         namespace = "io.github.redflitzi.compactdecimals"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
-        withJava() // enable java compilation support
+         withJava() // enable java compilation support
         withHostTestBuilder {}.configure {}
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -40,9 +47,10 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     linuxX64()
+    linuxArm64()
+    mingwX64()
 
-     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         // ...

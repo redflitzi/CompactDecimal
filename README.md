@@ -1,13 +1,18 @@
 # Compact Decimals
 
-Compact Decimal classes with small exponents and predictive, smaller footprints than BigDecimal.
-Multiplatform, no JVM , only Common
+Compact Decimal classes with small exponents and predictive, smaller footprints than BigDecimal.  
+Multiplatform, only Common, no platform dependencies.
 
-CompactDecimal has 96 bit:   
+These classes provide fixed-precision numbers with limited significant mantissa width between 4 - 60 bits:
+
+Decimal has 96 bit:   
 64 bit mantissa, 32 Bit exponent
 
-SmallDecimal has 64 bit:   
-60 bit mantissa, 4 bit exponent
+TinyDecimal has 64 bit:   
+56 bit mantissa, 8 bit exponent
+
+Currency has 64 bit:  (Währungssymbol? autom. Rappenrundung?)  
+61 bit mantissa, 3 bit exponent (only positive: 0 - 7 decimal places)
 
 
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)

@@ -3,7 +3,7 @@ package io.github.redflitzi.compactdecimals
 import kotlin.math.abs
 //import kotlin.reflect.jvm.jvmName
 
-public open class DecimalCore {
+public open class Decimal {
 
     // 64bit long plus 32 Bit exp:
 
@@ -16,21 +16,21 @@ public open class DecimalCore {
         // constructor imitations, just for JVM :-(
         // allows: DecimalCore(int), DecimalCore(Short), etc...
        // @JvmName("constFromByte")
-        public operator fun invoke(input:Byte): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:Byte): Decimal = Decimal(input.toLong(),0)
        // @JvmName("constfromUByte")
-        public operator fun invoke(input:UByte): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:UByte): Decimal = Decimal(input.toLong(),0)
        // @JvmName("constFromShort")
-        public operator fun invoke(input:Short): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:Short): Decimal = Decimal(input.toLong(),0)
        // @JvmName("constfromUShort")
-        public operator fun invoke(input:UShort): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:UShort): Decimal = Decimal(input.toLong(),0)
       //  @JvmName("constFromInt")
-        public operator fun invoke(input:Int): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:Int): Decimal = Decimal(input.toLong(),0)
       //  @JvmName("constfromUInt")
-        public operator fun invoke(input:UInt): DecimalCore= DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:UInt): Decimal= Decimal(input.toLong(),0)
       //  @JvmName("constFromLong")
-        public operator fun invoke(input:Long): DecimalCore = DecimalCore(input,0)
+        public operator fun invoke(input:Long): Decimal = Decimal(input,0)
       //  @JvmName("constfromULong")
-        public operator fun invoke(input:ULong): DecimalCore = DecimalCore(input.toLong(),0)
+        public operator fun invoke(input:ULong): Decimal = Decimal(input.toLong(),0)
 
         // static (common) variables and functions
 
@@ -201,17 +201,5 @@ fun shiftmult: mult mit 10^shift
 
 
 }
-
-public fun Float.toDecimal():DecimalCore = DecimalCore(this)
-public fun Double.toDecimal():DecimalCore = DecimalCore(this)
-
-public fun Byte.toDecimal():DecimalCore = DecimalCore(this)
-public fun UByte.toDecimal():DecimalCore = DecimalCore(this)
-public fun Short.toDecimal():DecimalCore = DecimalCore(this)
-public fun UShort.toDecimal():DecimalCore = DecimalCore(this)
-public fun Int.toDecimal():DecimalCore = DecimalCore(this)
-public fun UInt.toDecimal():DecimalCore = DecimalCore(this)
-public fun Long.toDecimal():DecimalCore = DecimalCore(this)
-public fun ULong.toDecimal():DecimalCore = DecimalCore(this)
 
 

@@ -56,7 +56,7 @@ public class CompactDecimal /* : DecimalCore */{
 
     override fun toString() : String {
         val (mant, plcs) = getUnpack()
-        val core = DecimalCore(mant, plcs)
+        val core = Decimal(mant, plcs)
         return core.toString()
     }
 
