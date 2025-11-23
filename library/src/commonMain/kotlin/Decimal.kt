@@ -3,7 +3,7 @@ package io.github.redflitzi.compactdecimals
 import kotlin.math.abs
 //import kotlin.reflect.jvm.jvmName
 
-public open class Decimal : Comparable<Decimal> {
+public open class Decimal : Number, Comparable<Decimal> {
 
     // 64bit long plus 32 Bit exp:
 
@@ -39,7 +39,7 @@ public open class Decimal : Comparable<Decimal> {
         // see also class DecimalFormat (leider nur JVM).
         // stattdessen ebenso lösen? (nicht in Lib, sondern bei formatierter Darstellung)
         // only for display
-        private var mindecimalplaces: Int = 0 /*  0 - 15 */
+        //private var mindecimalplaces: Int = 0 /*  0 - 15 */
 
         // for automatic rounding
         public fun setPrecision(prec: Int) {
@@ -64,19 +64,41 @@ public open class Decimal : Comparable<Decimal> {
 
     }
 
-/* how to round an integer
+    private fun shiftedMantissa() : Long  {
+          var shift: Int
+        when {
+            (decimalplaces > 0) -> {
+                shift = 10; repeat (decimalplaces) { shift *= 10 }
+                return (mantissa / shift)
+            }
+            (decimalplaces < 0) -> {
+                shift = 10; repeat (0-decimalplaces) {shift *= 10}
+                return (mantissa * shift)
+            }
+            else -> return mantissa
+        }
 
-Example: to next thousand (step = 1000)
-int offset = (number >= 0) ? (step / 2) : -(step/2);
-int roundedNumber = ((number + offset) / step) * step;
+    }
 
-missing: shiftplaces muss mit einfließen (step shiftmult. mit shiftplaces?)
+    public override fun toDouble(): Double = this.toString().toDouble()
+    public override fun toFloat(): Float = this.toString().toFloat()
+    public override fun toLong(): Long = shiftedMantissa()
+    public override fun toInt(): Int = shiftedMantissa().toInt()
+    public override fun toShort(): Short = shiftedMantissa().toShort()
+    public override fun toByte() : Byte = shiftedMantissa().toByte()
 
-fun shiftmult: mult mit 10^shift
 
- */
+    /* how to round an integer
 
+      Example: to next thousand (step = 1000)
+      int offset = (number >= 0) ? (step / 2) : -(step/2);
+      int roundedNumber = ((number + offset) / step) * step;
 
+      missing: shiftplaces muss mit einfließen (step shiftmult. mit shiftplaces?)
+
+      fun shiftmult: mult mit 10^shift
+
+       */
 
     public fun toPlainString() : String {
         if (mantissa == 0L) return "0"
