@@ -12,9 +12,6 @@ plugins {
 group = "io.github.redflitzi"
 version = "1.0.0"
 
-//defaultConfig {
-//    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//}
 
 kotlin {
     // for strict mode
@@ -35,6 +32,10 @@ kotlin {
             sourceSetTreeName = "test"
         }
 
+        //defaultConfig {
+        //    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //}
+
         compilations.configureEach {
             compilerOptions.configure {
                 jvmTarget.set(
@@ -48,7 +49,10 @@ kotlin {
     iosSimulatorArm64()
     linuxX64()
     linuxArm64()
+
     mingwX64()
+    macosX64()
+    macosArm64()
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
