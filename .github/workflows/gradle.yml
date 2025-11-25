@@ -30,6 +30,8 @@ jobs:
             os: ubuntu-latest
           - target: testAndroidHostTest
             os: ubuntu-latest
+          - target: mingwX64Test
+            os: windows-latest
     runs-on: ${{ matrix.os }}
 
     steps:
