@@ -1,5 +1,6 @@
 package io.github.redflitzi.compactdecimals
 
+import Dc
 import toDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,6 +17,26 @@ class DecimalCoreTest {
             "15",
             Decimal(15L).toPlainString(),
             "intConstructor: 15L"
+        )
+        assertEquals(
+            "16",
+            (16).Dc.toPlainString(),
+            "Int.Dc Constructor: 16"
+        )
+        assertEquals(
+            "17.5",
+            (17.5).Dc.toPlainString(),
+            "Double.Dc Constructor: 17.5"
+        )
+        assertEquals(
+            "18.5001",
+            "18.5001".Dc.toPlainString(),
+            "String.Dc Constructor: 18.5001"
+        )
+        assertEquals(
+            "18500",
+            "18500.000".Dc.toPlainString(),
+            "String.Dc Constructor: 18500.000"
         )
     }
 
