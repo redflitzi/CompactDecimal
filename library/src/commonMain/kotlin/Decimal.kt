@@ -87,6 +87,8 @@ public open class Decimal : Number, Comparable<Decimal> {
     public override fun toShort(): Short = shiftedMantissa().toShort()
     public override fun toByte() : Byte = shiftedMantissa().toByte()
 
+    public var Dc :Decimal
+
 
     /* how to round an integer
 
