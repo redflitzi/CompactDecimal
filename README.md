@@ -1,36 +1,20 @@
 # Compact Decimals
 
-Compact Decimal classes with small exponents and predictive, smaller footprints than BigDecimal.  
-Multiplatform, only Common, no platform dependencies.
+### Compact Decimal class with small exponents and a predictive, smaller footprint than BigDecimal.  
 
-These classes provide fixed-precision numbers with limited significant mantissa width between 4 - 60 bits:
-
-Decimal has 96 bit:   
-64 bit mantissa, 32 Bit exponent
-
-TinyDecimal has 64 bit:   
-56 bit mantissa, 8 bit exponent
-
-Currency has 64 bit:  (Währungssymbol? autom. Rappenrundung?)  
-61 bit mantissa, 3 bit exponent (only positive: 0 - 7 decimal places)
+KMP Multiplatform, only Common, no platform dependencies (and no restriction to JVM).
 
 
-[![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
+This Decimal has 64 bit:   
+60 bit mantissa, 4 bit exponent
 
-# Multiplatform Compact Decimal Library
+It's value range is from -576460752303423488 to +576460752303423487,  
 
-## What is it?
+with 0 - 15 decimal places.
 
-This repository contains a simple library project, intended to demonstrate a [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) library that is deployable to [Maven Central](https://central.sonatype.com/).
+It's small fixed 64bit footprint makes it possible to store it as an (unsigned) Long variable type anywhere where 8Byte places are available.
+.
+---
 
-The library has only one function: generate the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence) starting from platform-provided numbers. Also, it has a test for each platform just to be sure that tests run.
+Based on the official Multiplatform Library Template [https://github.com/Kotlin/multiplatform-library-template](https://github.com/Kotlin/multiplatform-library-template).
 
-Note that no other actions or tools usually required for the library development are set up, such as [tracking of backwards compatibility](https://kotlinlang.org/docs/jvm-api-guidelines-backward-compatibility.html#tools-designed-to-enforce-backward-compatibility), explicit API mode, licensing, contribution guideline, code of conduct and others. You can find a guide for best practices for designing Kotlin libraries [here](https://kotlinlang.org/docs/api-guidelines-introduction.html).
-
-## Guide
-
-Please find the detailed guide [here](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html).
-
-# Other resources
-* [Publishing via the Central Portal](https://central.sonatype.org/publish-ea/publish-ea-guide/)
-* [Gradle Maven Publish Plugin \- Publishing to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)

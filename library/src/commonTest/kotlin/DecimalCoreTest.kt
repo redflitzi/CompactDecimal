@@ -123,32 +123,32 @@ class DecimalCoreTest {
         assertEquals(
             "123",
             Decimal(123L, 0).toPlainString(),
-            "toPlainString: +mantisse, 0 places"
+            "toPlainString: +mantisse 123L, 0 places 0"
         )
         assertEquals(
             "1.24",
             Decimal(124L, 2).toPlainString(),
-            "toPlainString: +mantisse, +places"
+            "toPlainString: +mantisse, 124L +places 2"
         )
         assertEquals(
             "12500",
             Decimal(125L, -2).toPlainString(),
-            "toPlainString: +mantisse, -places"
+            "toPlainString: +mantisse 125L, -places -2"
         )
         assertEquals(
             "-125",
             Decimal(-125L, 0).toPlainString(),
-            "toPlainString: -mantisse, 0 places"
+            "toPlainString: -mantisse -125L, 0 places"
         )
         assertEquals(
             "-1.25",
             Decimal(-125L, +2).toPlainString(),
-            "toPlainString: -mantisse, +places"
+            "toPlainString: -mantisse -125L, +places +2"
         )
         assertEquals(
             "-12500",
             Decimal(-125L, -2).toPlainString(),
-            "toPlainString: -mantisse, -places"
+            "toPlainString: -mantisse -125L, -places -2"
         )
     }
 
@@ -166,22 +166,22 @@ class DecimalCoreTest {
         assertEquals(
             "1.25E4",
             Decimal(125L, -2).toScientificString(),
-            "toScientific: +mantisse, -places"
+            "toScientific: +mantisse 125L, -places -2"
         )
         assertEquals(
             "-1.25E2",
             Decimal(-125L, 0).toScientificString(),
-            "toScientific: -mantisse, 0places"
+            "toScientific: -mantisse, 0places, '1.25E2'"
         )
         assertEquals(
             "-1.25E-8",
             Decimal(-125L, 10).toScientificString(),
-            "toScientific: -mantisse, +places"
+            "toScientific: -mantisse, +places, '-1.25E-8'"
         )
         assertEquals(
             "-1.25E12",
             Decimal(-125L, -10).toScientificString(),
-            "toScientific: -mantisse, -places"
+            "toScientific: -mantisse, -places, '1.25E12'"
         )
 
     }

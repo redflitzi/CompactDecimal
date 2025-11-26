@@ -3,12 +3,29 @@ package io.github.redflitzi.compactdecimals
 import kotlin.math.abs
 //import kotlin.reflect.jvm.jvmName
 
+
 public open class Decimal : Number, Comparable<Decimal> {
 
-    // 64bit long plus 32 Bit exp:
+    // 60bit long plus 4 Bit exp:
 
-    private var mantissa: Long = 0L
-    private var decimalplaces: Int = 0
+     private var decimal64: Long = 0L
+
+    internal fun unpack64(): Pair<Long, Int> {
+        val plcs: Int = (decimal64 and 0x0FL).toInt()
+        val mant: Long = (decimal64 shr 4)
+         return Pair(mant, plcs)
+    }
+
+    internal fun pack64(mant: Long, plcs: Int): Long {
+        var mantissa: Long = mant
+        var decimalplaces: Int = plcs
+        while (decimalplaces < 0) {
+            mantissa *=10;
+            decimalplaces++;
+        }
+       return ((mantissa shl 4) or (decimalplaces and 0x0F).toLong())
+    }
+
 
 
     public companion object {
@@ -52,20 +69,35 @@ public open class Decimal : Number, Comparable<Decimal> {
                 15
             } else prec
         }
+
+        public enum class RoundingMode {
+            UP,
+            DOWN,
+            CEILING,
+            FLOOR,
+            HALF_UP,
+            HALF_DOWN,
+            HALF_EVEN,
+            UNNECESSARY
+        }
     }
 
+
+
+
+    /*
     private fun normalize() {
         while ((mantissa % 10) == 0L) {
             if (mantissa == 0L) break
             mantissa /= 10
             decimalplaces--
         }
-
-
     }
+    */
 
     private fun shiftedMantissa() : Long  {
-          var shift: Int
+        val (mantissa, decimalplaces) = unpack64()
+        var shift: Int
         when {
             (decimalplaces > 0) -> {
                 shift = 10; repeat (decimalplaces) { shift *= 10 }
@@ -106,6 +138,7 @@ public open class Decimal : Number, Comparable<Decimal> {
        */
 
     public fun toPlainString() : String {
+        val (mantissa, decimalplaces) = unpack64()
         if (mantissa == 0L) return "0"
         var decimalString: String
         val prefix : String
@@ -132,6 +165,7 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     public fun toScientificString() : String {
+        val (mantissa, decimalplaces) = unpack64()
         if (mantissa == 0L) return "0E0"
         var decimalString: String
         val prefix : String
@@ -144,14 +178,14 @@ public open class Decimal : Number, Comparable<Decimal> {
             prefix = ""
         }
         val adjustedExp = (decimalString.count()-1) - decimalplaces
-        if (decimalString.count() > 1) decimalString = decimalString.take(1) + '.' + decimalString.substring(1)
+        if (decimalString.count() > 1) decimalString = decimalString.take(1) + '.' + decimalString.substring(1).trimEnd('0')
 
         return prefix+decimalString+'E'+adjustedExp.toString(10)
     }
 
     public override fun toString() : String {
         // ab wann / wie / wo / warum Exponentialdarstellung?
-        if (abs(mantissa) >= 10000000) return this.toScientificString()
+        //if (abs(mantissa) >= 10000000) return this.toScientificString()
         return this.toPlainString()
         // evtl hier mindecimalplaces formatierung
     }
@@ -183,10 +217,9 @@ public open class Decimal : Number, Comparable<Decimal> {
  */
 
     override operator fun compareTo(other: Decimal): Int {
-        var thisdecimalplaces = this.decimalplaces
-        var thatdecimalplaces = other.decimalplaces
-        var thismantissa = this.mantissa
-        var thatmantissa = other.mantissa
+        var (thismantissa, thisdecimalplaces) = unpack64()
+        var (thatmantissa, thatdecimalplaces) = other.unpack64()
+
         // error handling still missing!
         while (thisdecimalplaces < thatdecimalplaces) {
             thismantissa *= 10
@@ -223,15 +256,16 @@ public open class Decimal : Number, Comparable<Decimal> {
         var intgString = match.groups["intg"]?.value ?: ""
 
         intgString += fractString
-        decimPlcs -= expn                 // expn rechnet andersrum, expn < 0 = Nachkommastellen!
+        decimPlcs -= expn                 // expn rechnet andersrum, 0 - expn = Nachkommastellen!
 
-        var mantString = intgString.trimEnd('0')
+        var mantString = intgString //.trimEnd('0')
 
-        val tens = intgString.length - mantString.length
+        //val tens = intgString.length - mantString.length
         if (mantString in listOf("+","- ", "")) mantString +="0"
-        mantissa = mantString.toLong()
-        decimalplaces = decimPlcs - tens
-        normalize()
+        val mantissa: Long = mantString.toLong()
+        val decimalplaces: Int = decimPlcs // - tens
+        //normalize()
+        decimal64 = pack64(mantissa, decimalplaces)
     }
 
     public constructor (input:Float): this(input.toString())
@@ -239,9 +273,8 @@ public open class Decimal : Number, Comparable<Decimal> {
 
 
     internal constructor (mant: Long, plcs: Int)  {
-        mantissa = mant
-        decimalplaces = plcs
-        normalize()
+        decimal64 = pack64(mant,plcs)
+        //normalize()
     }
 
 
