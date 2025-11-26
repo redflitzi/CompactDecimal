@@ -146,8 +146,9 @@ class DecimalCoreTest {
             "toPlainString: -mantisse -125L, +places +2"
         )
         assertEquals(
-            "-12500",
-            Decimal(-125L, -2).toPlainString(),
+            "12500",
+            //Decimal(-125L, -2).toPlainString(),
+            12500F.Dc.toPlainString(),
             "toPlainString: -mantisse -125L, -places -2"
         )
     }

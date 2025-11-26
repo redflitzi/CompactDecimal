@@ -1,12 +1,11 @@
 package io.github.redflitzi.compactdecimals
 
-import kotlin.math.abs
 //import kotlin.reflect.jvm.jvmName
 
 
 public open class Decimal : Number, Comparable<Decimal> {
 
-    // 60bit long plus 4 Bit exp:
+    // 60bit long mantissa plus 4 Bit int exponent (decimal places):
 
      private var decimal64: Long = 0L
 
@@ -82,6 +81,76 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
     }
 
+    internal data class AllMants(val thism:Long, val thatm: Long, val deci: Int)
+    internal fun adjustMants(thism:Long, thisd: Int, thatm: Long, thatd: Int): AllMants {
+        // error handling still missing!
+        var thismantissa = thism
+        var thisdecimalplaces=thisd
+        var thatmantissa = thatm
+        var thatdecimalplaces=thatd
+
+        // error handling still missing!
+        while (thisdecimalplaces < thatdecimalplaces) {
+            thismantissa *= 10
+            thisdecimalplaces++
+        }
+        while (thatdecimalplaces < thisdecimalplaces) {
+            thatmantissa *= 10
+            thatdecimalplaces++
+        }
+
+        return AllMants(thismantissa, thatmantissa, thisdecimalplaces)
+    }
+
+    internal fun normalizeMant(mant:Long, deci:Int): Pair<Long, Int>{
+        var mantissa = mant
+        var decimalplaces = deci
+        while ((mantissa % 10) == 0L) {
+            if ((mantissa == 0L) or (decimalplaces == 0)) break
+            mantissa /= 10
+            decimalplaces--
+        }
+        return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
+    }
+
+
+    public operator fun plus(other: Decimal) : Decimal {
+        var (thism, thisd) = unpack64()
+        var (thatm, thatd) = other.unpack64()
+
+        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        return Decimal(thismantissa+thatmantissa, decimalplaces)
+    }
+    public operator fun minus(other: Decimal) : Decimal {
+        var (thism, thisd) = unpack64()
+        var (thatm, thatd) = other.unpack64()
+
+        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        return Decimal(thismantissa-thatmantissa, decimalplaces)
+    }
+
+    public operator fun times(other: Decimal) : Decimal {
+        var (thismantissa, thisdecimalplaces) = unpack64()
+        var (thatmantissa, thatdecimalplaces) = other.unpack64()
+        var (mantissa, decimalplaces) = normalizeMant(thismantissa*thatmantissa,thisdecimalplaces+thatdecimalplaces)
+
+        return Decimal(mantissa, decimalplaces)
+    }
+
+    public operator fun div(other: Decimal) : Decimal {
+        var (thism, thisd) = unpack64()
+        var (thatm, thatd) = other.unpack64()
+        while ((thisd+thatd) < 15) {
+           var res = thism/thatm
+            if ((thism*res)==thatm) break
+            thism *=10; thisd++
+        }
+
+        //var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        var (mantissa, dplaces) = normalizeMant(thism/thatm,thisd+thatd)
+
+        return Decimal(mantissa, dplaces)
+    }
 
 
 
@@ -217,18 +286,11 @@ public open class Decimal : Number, Comparable<Decimal> {
  */
 
     override operator fun compareTo(other: Decimal): Int {
-        var (thismantissa, thisdecimalplaces) = unpack64()
-        var (thatmantissa, thatdecimalplaces) = other.unpack64()
+        var (thism, thisd) = unpack64()
+        var (thatm, thatd) = other.unpack64()
 
-        // error handling still missing!
-        while (thisdecimalplaces < thatdecimalplaces) {
-            thismantissa *= 10
-            thisdecimalplaces++
-        }
-        while (thatdecimalplaces < thisdecimalplaces) {
-            thatmantissa *= 10
-            thatdecimalplaces++
-        }
+        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+
         return when {
             (thismantissa > thatmantissa) -> 1
             (thismantissa < thatmantissa) -> -1
@@ -255,16 +317,13 @@ public open class Decimal : Number, Comparable<Decimal> {
 
         var intgString = match.groups["intg"]?.value ?: ""
 
-        intgString += fractString
+        var mantString = intgString + fractString
         decimPlcs -= expn                 // expn rechnet andersrum, 0 - expn = Nachkommastellen!
 
-        var mantString = intgString //.trimEnd('0')
-
-        //val tens = intgString.length - mantString.length
         if (mantString in listOf("+","- ", "")) mantString +="0"
         val mantissa: Long = mantString.toLong()
-        val decimalplaces: Int = decimPlcs // - tens
-        //normalize()
+        val decimalplaces: Int = decimPlcs
+
         decimal64 = pack64(mantissa, decimalplaces)
     }
 
@@ -274,7 +333,6 @@ public open class Decimal : Number, Comparable<Decimal> {
 
     internal constructor (mant: Long, plcs: Int)  {
         decimal64 = pack64(mant,plcs)
-        //normalize()
     }
 
 
