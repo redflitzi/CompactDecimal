@@ -62,6 +62,17 @@ class DecimalOperatorTest {
             (0.5.Dc * 4.52.Dc).toPlainString(),
             "operator (0,5.Dc * 4.52.Dc)"
         )
+        assertEquals(
+            "2.6",
+            (1.3.Dc * 2).toPlainString(),
+            "operator with Int (1.3.Dc * 2)"
+        )
+        var mydeci = 1.3.Dc * 2
+        assertEquals(
+            "2.6",
+            mydeci.toPlainString(),
+            "operator with mydeci = (1.3.Dc * 2)"
+        )
     }
 
     @Test
@@ -80,6 +91,24 @@ class DecimalOperatorTest {
             "3.4285714285714",
             (12.Dc / 3.5.Dc).toPlainString(),
             "operator (12.Dc / 3.5.Dc)"
+        )
+    }
+    @Test
+    fun opModuloTests() {
+        assertEquals(
+            "0",
+            (12.Dc % 3.Dc).toPlainString(),
+            "operator (12.Dc % 3.Dc)"
+        )
+        assertEquals(
+            "1",
+            (13.Dc % 3.Dc).toPlainString(),
+            "operator (13.Dc % 3.Dc)"
+        )
+        assertEquals(
+            "1.5",
+            (12.Dc % 3.5.Dc).toPlainString(),
+            "operator (12.Dc % 3.5.Dc)"
         )
     }
 }
