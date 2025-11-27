@@ -77,7 +77,7 @@ class DecimalOperatorTest {
             "operator (12.Dc / 3.Dc)"
         )
         assertEquals(
-            "3.4285714",
+            "3.4285714285714",
             (12.Dc / 3.5.Dc).toPlainString(),
             "operator (12.Dc / 3.5.Dc)"
         )

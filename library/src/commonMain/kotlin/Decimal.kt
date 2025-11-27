@@ -1,28 +1,24 @@
 package io.github.redflitzi.compactdecimals
 
+import kotlin.math.min
+
 //import kotlin.reflect.jvm.jvmName
 
 
 public open class Decimal : Number, Comparable<Decimal> {
 
     // 60bit long mantissa plus 4 Bit int exponent (decimal places):
-
      private var decimal64: Long = 0L
 
     internal fun unpack64(): Pair<Long, Int> {
-        val plcs: Int = (decimal64 and 0x0FL).toInt()
+        val deci: Int = (decimal64 and 0x0FL).toInt()
         val mant: Long = (decimal64 shr 4)
-         return Pair(mant, plcs)
+        return Pair(mant, deci)
     }
 
-    internal fun pack64(mant: Long, plcs: Int): Long {
-        var mantissa: Long = mant
-        var decimalplaces: Int = plcs
-        while (decimalplaces < 0) {
-            mantissa *=10;
-            decimalplaces++;
-        }
-       return ((mantissa shl 4) or (decimalplaces and 0x0F).toLong())
+    internal fun pack64(mant: Long, deci: Int): Long {
+        var(normalizedMant, normalizedDplcs) = normalizeMant(mant, deci)
+        return ((normalizedMant shl 4) or (normalizedDplcs and 0x0F).toLong())
     }
 
 
@@ -52,11 +48,6 @@ public open class Decimal : Number, Comparable<Decimal> {
 
         private var precision: Int = 15 /* 0 - 15 */
 
-        // see also class DecimalFormat (leider nur JVM).
-        // stattdessen ebenso lösen? (nicht in Lib, sondern bei formatierter Darstellung)
-        // only for display
-        //private var mindecimalplaces: Int = 0 /*  0 - 15 */
-
         // for automatic rounding
         public fun setPrecision(prec: Int) {
             /*
@@ -68,6 +59,17 @@ public open class Decimal : Number, Comparable<Decimal> {
                 15
             } else prec
         }
+
+        // see also class DecimalFormat (leider nur JVM).
+        // stattdessen ebenso lösen? (nicht in Lib, sondern bei formatierter Darstellung)
+
+        // only for display toString()
+        private var mindecimals: Int = 0 /*  0 - max */
+
+        public fun setMinDecimals(mind: Int) {
+              mindecimals = if (mind < 0) 0; else mind
+        }
+
 
         public enum class RoundingMode {
             UP,
@@ -102,12 +104,38 @@ public open class Decimal : Number, Comparable<Decimal> {
         return AllMants(thismantissa, thatmantissa, thisdecimalplaces)
     }
 
-    internal fun normalizeMant(mant:Long, deci:Int): Pair<Long, Int>{
+    private fun normalizeMant(mant:Long, deci:Int): Pair<Long, Int>{
         var mantissa = mant
         var decimalplaces = deci
-        while ((mantissa % 10) == 0L) {
-            if ((mantissa == 0L) or (decimalplaces == 0)) break
+        var maxdecimalplaces = min(precision, 15)
+
+        // most important, correct negative decimal places
+        while (decimalplaces < 0) {
+            mantissa *=10;
+            decimalplaces++
+        }
+
+        // round to desired precision, HALF_UP (later on, use roundmode instead?)
+        while ((decimalplaces > 0) and (mantissa != 0L) and (decimalplaces > maxdecimalplaces)) {
+             mantissa = (mantissa+5) / 10
+            decimalplaces--
+        }
+
+        // at last truncate empty decimal places
+        while ((decimalplaces > 0) and (mantissa != 0L) and ((mantissa % 10) == 0L)) {
             mantissa /= 10
+            decimalplaces--
+         }
+        return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
+    }
+
+    internal fun roundMant(mant:Long, deci:Int, roundingMode: RoundingMode): Pair<Long, Int>{
+        var mantissa = mant
+        var decimalplaces = deci
+        var maxdecimalplaces = min(precision, 15)
+        while (decimalplaces > maxdecimalplaces) {
+            if ((mantissa == 0L) or (decimalplaces == 0)) break
+            mantissa = (mantissa+5) / 10
             decimalplaces--
         }
         return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
@@ -132,9 +160,12 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun times(other: Decimal) : Decimal {
         var (thismantissa, thisdecimalplaces) = unpack64()
         var (thatmantissa, thatdecimalplaces) = other.unpack64()
-        var (mantissa, decimalplaces) = normalizeMant(thismantissa*thatmantissa,thisdecimalplaces+thatdecimalplaces)
-
-        return Decimal(mantissa, decimalplaces)
+        //var (mantissa, decimalplaces) = normalizeMant(thismantissa*thatmantissa,thisdecimalplaces+thatdecimalplaces)
+        return Decimal(thismantissa*thatmantissa, thisdecimalplaces+thatdecimalplaces)
+    }
+    public operator fun times(other: Int) : Decimal {
+        var (mantissa, decimalplaces) = unpack64()
+        return Decimal(mantissa*other, decimalplaces)
     }
 
     public operator fun div(other: Decimal) : Decimal {
@@ -145,11 +176,8 @@ public open class Decimal : Number, Comparable<Decimal> {
             if ((thism*res)==thatm) break
             thism *=10; thisd++
         }
-
-        //var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
-        var (mantissa, dplaces) = normalizeMant(thism/thatm,thisd+thatd)
-
-        return Decimal(mantissa, dplaces)
+        //var (mantissa, dplaces) = normalizeMant(thism/thatm,thisd-thatd)
+        return Decimal(thism/thatm, thisd-thatd)
     }
 
 
@@ -220,15 +248,13 @@ public open class Decimal : Number, Comparable<Decimal> {
             prefix = ""
         }
 
-        if (decimalplaces > 0) { // decimal digits exist
-            var pos = decimalString.count() - decimalplaces
-            if (pos <= 0) { // more than significant digits! prepend zeros
-              decimalString = "0"+"0".repeat(0-pos)+decimalString
-                pos = 1
+        if (decimalplaces > 0) { // decimal digits exist, insert a dot
+            var decimaldotpos = decimalString.count() - decimalplaces
+            if (decimaldotpos <= 0) { // more than significant digits! prepend zeros!
+              decimalString = "0"+"0".repeat(0-decimaldotpos)+decimalString
+                decimaldotpos = 1
             }
-            decimalString = decimalString.take(pos) + '.' + decimalString.substring(pos)
-        } else if (decimalplaces < 0) { // factor exists
-            decimalString += ("0".repeat(0-decimalplaces))
+            decimalString = decimalString.take(decimaldotpos) + '.' + decimalString.substring(decimaldotpos)
         }
         return prefix+decimalString
     }
@@ -253,9 +279,16 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     public override fun toString() : String {
-        // ab wann / wie / wo / warum Exponentialdarstellung?
-        //if (abs(mantissa) >= 10000000) return this.toScientificString()
-        return this.toPlainString()
+        val (mantissa, decimalplaces) = unpack64()
+        var decstring = this.toPlainString()
+        // only for the optics
+        if (mindecimals > 0) {
+            val  missingplaces = mindecimals - decimalplaces
+            if (decimalplaces <= 0) decstring+='.'
+            if (missingplaces > 0) decstring += ("0".repeat(missingplaces))
+        }
+
+        return decstring
         // evtl hier mindecimalplaces formatierung
     }
 

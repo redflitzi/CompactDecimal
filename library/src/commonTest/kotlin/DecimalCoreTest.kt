@@ -28,16 +28,31 @@ class DecimalCoreTest {
             (17.5).Dc.toPlainString(),
             "Double.Dc Constructor: 17.5"
         )
+        Decimal.setMinDecimals(2)
         assertEquals(
             "18.5001",
-            "18.5001".Dc.toPlainString(),
+            "18.5001".Dc.toString(),
             "String.Dc Constructor: 18.5001"
         )
+        Decimal.setMinDecimals(0) // default
         assertEquals(
             "18500",
-            "18500.000".Dc.toPlainString(),
+            "18500.000".Dc.toString(),
             "String.Dc Constructor: 18500.000"
         )
+        Decimal.setPrecision(2)
+        assertEquals(
+            "18.5",
+            "18.5001".Dc.toString(),
+            "String.Dc Constructor: 18.5001"
+        )
+        Decimal.setPrecision(0)
+        assertEquals(
+            "19",
+            "18.5001".Dc.toString(),
+            "String.Dc Constructor: 18.5001"
+        )
+        Decimal.setPrecision(15) // default
     }
 
     @Test fun floatConstructorTests() {
