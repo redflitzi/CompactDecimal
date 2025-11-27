@@ -1,4 +1,4 @@
-package io.github.redflitzi.compactdecimals
+package io.github.redflitzi.compactdecimal
 
 import Dc
 import toDecimal

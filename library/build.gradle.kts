@@ -24,7 +24,7 @@ kotlin {
     //@Suppress("UnstableApiUsage")
     // androidLibrary {
     android {
-        namespace = "io.github.redflitzi.compactdecimals"
+        namespace = "io.github.redflitzi.compactdecimal"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -35,7 +35,7 @@ kotlin {
         }
 /*
         defaultConfig {
-            //applicationId = "io.github.redflitzi.compactdecimals"
+            //applicationId = "io.github.redflitzi.compactdecimal"
             minSdk = 31
             //targetSdk = 34
             //versionCode = 1

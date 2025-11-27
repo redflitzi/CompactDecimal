@@ -22,7 +22,19 @@ Just use it with any numeric type, with the extension *".Dc"*.
 Like *5.Dc* or *17.48.Dc*.
 
 
+### Precision and display
 
+**setPrecision(Int)** sets the number of decimal places every Decimal will be rounded to automatically.  
+The supported range is from 0 to 15.   
+15 is the default value and the maximum precision.  
+**setPrecision(2)** means that all Decimals will be rounded half-up to two decimal places.
+**setPrecision(0)** means that only whole numbers will be generated.
+
+**setMinDecimals(Int)** sets the number of minimum decimal places the Decimal will be formatted to with **toString()**.  
+The supported range is from 0 to any positive value.   
+0 is the default value and means there are no mandatory decimal places.  
+If this setting sets more decimal places than the Decimal value has, the remaining decimal places are filled with "0"s.  
+**setMinDecimals(2)** means that at least two decimal places are shown when using **toString()** (but more if the Decimal has more decial places).
 
 
 ---
