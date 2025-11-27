@@ -1,6 +1,5 @@
-package io.github.redflitzi.compactdecimals
-
 import kotlin.math.min
+import kotlin.text.get
 
 //import kotlin.reflect.jvm.jvmName
 
@@ -11,13 +10,13 @@ public open class Decimal : Number, Comparable<Decimal> {
      private var decimal64: Long = 0L
 
     internal fun unpack64(): Pair<Long, Int> {
-        val deci: Int = (decimal64 and 0x0FL).toInt()
-        val mant: Long = (decimal64 shr 4)
-        return Pair(mant, deci)
+        val decimalplaces: Int = (decimal64 and 0x0FL).toInt()
+        val mantissa: Long = (decimal64 shr 4)
+        return Pair(mantissa, decimalplaces)
     }
 
     internal fun pack64(mant: Long, deci: Int): Long {
-        var(normalizedMant, normalizedDplcs) = normalizeMant(mant, deci)
+        val(normalizedMant, normalizedDplcs) = normalizeMant(mant, deci)
         return ((normalizedMant shl 4) or (normalizedDplcs and 0x0F).toLong())
     }
 
@@ -46,9 +45,8 @@ public open class Decimal : Number, Comparable<Decimal> {
 
         // static (common) variables and functions
 
-        private var precision: Int = 15 /* 0 - 15 */
-
         // for automatic rounding
+        private var precision: Int = 15 /* 0 - 15 */
         public fun setPrecision(prec: Int) {
             /*
             if ((prec < 0) or (prec > 15)) {  // Error! wie?  }
@@ -60,12 +58,8 @@ public open class Decimal : Number, Comparable<Decimal> {
             } else prec
         }
 
-        // see also class DecimalFormat (leider nur JVM).
-        // stattdessen ebenso lösen? (nicht in Lib, sondern bei formatierter Darstellung)
-
-        // only for display toString()
+        // only for display toString()!
         private var mindecimals: Int = 0 /*  0 - max */
-
         public fun setMinDecimals(mind: Int) {
               mindecimals = if (mind < 0) 0; else mind
         }
@@ -107,11 +101,11 @@ public open class Decimal : Number, Comparable<Decimal> {
     private fun normalizeMant(mant:Long, deci:Int): Pair<Long, Int>{
         var mantissa = mant
         var decimalplaces = deci
-        var maxdecimalplaces = min(precision, 15)
+        val maxdecimalplaces = min(precision, 15)
 
         // most important, correct negative decimal places
         while (decimalplaces < 0) {
-            mantissa *=10;
+            mantissa *=10
             decimalplaces++
         }
 
@@ -129,10 +123,11 @@ public open class Decimal : Number, Comparable<Decimal> {
         return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
 
+    /*
     internal fun roundMant(mant:Long, deci:Int, roundingMode: RoundingMode): Pair<Long, Int>{
         var mantissa = mant
         var decimalplaces = deci
-        var maxdecimalplaces = min(precision, 15)
+        val maxdecimalplaces = min(precision, 15)
         while (decimalplaces > maxdecimalplaces) {
             if ((mantissa == 0L) or (decimalplaces == 0)) break
             mantissa = (mantissa+5) / 10
@@ -140,40 +135,40 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
         return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
+    */
 
 
     public operator fun plus(other: Decimal) : Decimal {
-        var (thism, thisd) = unpack64()
-        var (thatm, thatd) = other.unpack64()
+        val (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
 
-        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
         return Decimal(thismantissa+thatmantissa, decimalplaces)
     }
     public operator fun minus(other: Decimal) : Decimal {
-        var (thism, thisd) = unpack64()
-        var (thatm, thatd) = other.unpack64()
+        val (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
 
-        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
         return Decimal(thismantissa-thatmantissa, decimalplaces)
     }
 
     public operator fun times(other: Decimal) : Decimal {
-        var (thismantissa, thisdecimalplaces) = unpack64()
-        var (thatmantissa, thatdecimalplaces) = other.unpack64()
+        val (thismantissa, thisdecimalplaces) = unpack64()
+        val (thatmantissa, thatdecimalplaces) = other.unpack64()
         //var (mantissa, decimalplaces) = normalizeMant(thismantissa*thatmantissa,thisdecimalplaces+thatdecimalplaces)
         return Decimal(thismantissa*thatmantissa, thisdecimalplaces+thatdecimalplaces)
     }
     public operator fun times(other: Int) : Decimal {
-        var (mantissa, decimalplaces) = unpack64()
+        val (mantissa, decimalplaces) = unpack64()
         return Decimal(mantissa*other, decimalplaces)
     }
 
     public operator fun div(other: Decimal) : Decimal {
         var (thism, thisd) = unpack64()
-        var (thatm, thatd) = other.unpack64()
-        while ((thisd+thatd) < 15) {
-           var res = thism/thatm
-            if ((thism*res)==thatm) break
+        val (thatm, thatd) = other.unpack64()
+        while ((thisd + thatd) < 15) {
+            if ((thism * (thism / thatm)) == thatm) break
             thism *=10; thisd++
         }
         //var (mantissa, dplaces) = normalizeMant(thism/thatm,thisd-thatd)
@@ -279,7 +274,7 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     public override fun toString() : String {
-        val (mantissa, decimalplaces) = unpack64()
+        val (_, decimalplaces) = unpack64()
         var decstring = this.toPlainString()
         // only for the optics
         if (mindecimals > 0) {
@@ -319,10 +314,10 @@ public open class Decimal : Number, Comparable<Decimal> {
  */
 
     override operator fun compareTo(other: Decimal): Int {
-        var (thism, thisd) = unpack64()
-        var (thatm, thatd) = other.unpack64()
+        val (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
 
-        var (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, _) = adjustMants(thism, thisd, thatm, thatd)
 
         return when {
             (thismantissa > thatmantissa) -> 1

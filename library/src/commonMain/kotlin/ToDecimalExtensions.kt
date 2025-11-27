@@ -1,5 +1,3 @@
-import io.github.redflitzi.compactdecimals.Decimal
-
 public fun String.toDecimal():Decimal = Decimal(this)
 public fun Float.toDecimal():Decimal = Decimal(this)
 public fun Double.toDecimal():Decimal = Decimal(this)
