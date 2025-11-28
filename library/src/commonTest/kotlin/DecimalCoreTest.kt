@@ -61,17 +61,17 @@ class DecimalCoreTest {
         assertEquals(
             "100000.47",
             Decimal(100000.47F).toPlainString(),
-            "floatConstructor: 0000000.47"
+            "floatConstructor: 10000000.47"
         )
         assertEquals(
             "10000000.47",
             Decimal(10000000.47).toPlainString(),
-            "doubleConstructor: 0000000.47"
+            "doubleConstructor: 10000000.47"
         )
         assertEquals(
             "10000000.47",
             (10000000.47).toDecimal().toPlainString(),
-            "double.toDecimal(): 0000000.47"
+            "double.toDecimal(): 10000000.47"
         )
         assertEquals(
             "15.3",

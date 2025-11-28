@@ -41,6 +41,16 @@ The supported range is from 0 to any positive value.
 If this setting sets more decimal places than the Decimal value has, the remaining decimal places are filled with "0"s.  
 **setMinDecimals(2)** means that at least two decimal places are shown when using **toString()** (but more if the Decimal has more decimal places).
 
+#### Usage (not yet active!)
+Use maven dependency:
+
+```xml
+<dependency>
+    <groupId>io.github.redflitzi</groupId>
+    <artifactId>compactdecimal</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ---
 

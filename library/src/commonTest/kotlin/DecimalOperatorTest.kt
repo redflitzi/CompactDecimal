@@ -5,6 +5,7 @@ import toDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+
 class DecimalOperatorTest {
 
     @Test
@@ -88,13 +89,41 @@ class DecimalOperatorTest {
             "operator (12.Dc / 3.Dc)"
         )
         assertEquals(
-            "3.4285714285714",
+            "0.2",
+            (0.8.Dc / 4.Dc).toPlainString(),
+            "operator ((0.8).Dc / 4.Dc)"
+        )
+
+        assertEquals(
+            "3.428571428571429",
             (12.Dc / 3.5.Dc).toPlainString(),
             "operator (12.Dc / 3.5.Dc)"
         )
+
+        assertEquals(
+            "-0.2",
+            ((-0.8).Dc / 4.Dc).toPlainString(),
+            "operator ((-0.8).Dc / 4.Dc)"
+        )
+        assertEquals(
+            "0.2",
+            ((-0.8).Dc / (-4).Dc).toPlainString(),
+            "operator ((-0.8).Dc / (-4).Dc)"
+        )
+        assertEquals(
+            "0.177777777777778",
+            ((0.8).Dc / (4.5).Dc).toPlainString(),
+            "operator ((0.8).Dc / (4.5).Dc)"
+        )
+        assertEquals(
+            "0.177777777777778",
+            ((-0.8).Dc / (-4.5).Dc).toPlainString(),
+            "operator ((-0.8).Dc / (-4.5).Dc)"
+        )
     }
+
     @Test
-    fun opModuloTests() {
+    fun opRemTests() {
         assertEquals(
             "0",
             (12.Dc % 3.Dc).toPlainString(),

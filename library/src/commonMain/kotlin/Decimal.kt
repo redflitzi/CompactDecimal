@@ -1,3 +1,4 @@
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.text.get
 
@@ -15,8 +16,9 @@ public open class Decimal : Number, Comparable<Decimal> {
         return Pair(mantissa, decimalplaces)
     }
 
-    internal fun pack64(mant: Long, deci: Int): Long {
-        val(normalizedMant, normalizedDplcs) = normalizeMant(mant, deci)
+    internal fun pack64(mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false): Long {
+        val(normalizedMant, normalizedDplcs) = normalizeMant(mantissa, decimalplaces)
+        println("($precision, $mindecimals): pack64: $mantissa:$decimalplaces -> $normalizedMant:$normalizedDplcs")
         return ((normalizedMant shl 4) or (normalizedDplcs and 0x0F).toLong())
     }
 
@@ -25,7 +27,7 @@ public open class Decimal : Number, Comparable<Decimal> {
     public companion object {
 
         // constructor imitations, just for JVM :-(
-        // allows: DecimalCore(int), DecimalCore(Short), etc...
+        // allows: Decimal(int), Decimal(Short), etc...
        // @JvmName("constFromByte")
         public operator fun invoke(input:Byte): Decimal = Decimal(input.toLong(),0)
        // @JvmName("constfromUByte")
@@ -104,24 +106,32 @@ public open class Decimal : Number, Comparable<Decimal> {
         var mantissa = mant
         var decimalplaces = deci
         val maxdecimalplaces = min(precision, 15)
+        val isnegative = (mantissa < 0)
 
-        // most important, correct negative decimal places
+        if (isnegative) mantissa = 0-mantissa
+
+        // most important, correct negative decimal places, as we dont support them
         while (decimalplaces < 0) {
             mantissa *=10
             decimalplaces++
         }
 
         // round to desired precision, HALF_UP (later on, use roundmode instead?)
-        while ((decimalplaces > 0) and (mantissa != 0L) and (decimalplaces > maxdecimalplaces)) {
+        while ((decimalplaces > 0) and (mantissa != 0L) and ((decimalplaces > maxdecimalplaces) or ((mantissa % 10) == 0L))) {
              mantissa = (mantissa+5) / 10
             decimalplaces--
         }
 
-        // at last truncate empty decimal places
+        // at last truncate any empty decimal places
+        /*
         while ((decimalplaces > 0) and (mantissa != 0L) and ((mantissa % 10) == 0L)) {
+            //mantissa = (mantissa+5) / 10
             mantissa /= 10
             decimalplaces--
-         }
+        }*/
+
+        if (isnegative) mantissa = 0-mantissa
+
         return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
 
@@ -138,6 +148,7 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
         return Decimal(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
+
 
     /**********  Operators ************/
 
@@ -156,6 +167,10 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun plus(other: Int) : Decimal = plus(other.toDecimal())
     public operator fun plus(other: Short) : Decimal = plus(other.toDecimal())
     public operator fun plus(other: Byte) : Decimal = plus(other.toDecimal())
+    public operator fun plus(other: ULong) : Decimal = plus(other.toDecimal())
+    public operator fun plus(other: UInt) : Decimal = plus(other.toDecimal())
+    public operator fun plus(other: UShort) : Decimal = plus(other.toDecimal())
+    public operator fun plus(other: UByte) : Decimal = plus(other.toDecimal())
 
     /*** operator minus (-) ***/
 
@@ -172,6 +187,10 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun minus(other: Int) : Decimal = minus(other.toDecimal())
     public operator fun minus(other: Short) : Decimal = minus(other.toDecimal())
     public operator fun minus(other: Byte) : Decimal = minus(other.toDecimal())
+    public operator fun minus(other: ULong) : Decimal = minus(other.toDecimal())
+    public operator fun minus(other: UInt) : Decimal = minus(other.toDecimal())
+    public operator fun minus(other: UShort) : Decimal = minus(other.toDecimal())
+    public operator fun minus(other: UByte) : Decimal = minus(other.toDecimal())
 
 
     /*** operator times (*) ***/
@@ -188,17 +207,30 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun times(other: Int) : Decimal = times(other.toDecimal())
     public operator fun times(other: Short) : Decimal = times(other.toDecimal())
     public operator fun times(other: Byte) : Decimal = times(other.toDecimal())
+    public operator fun times(other: ULong) : Decimal = times(other.toDecimal())
+    public operator fun times(other: UInt) : Decimal = times(other.toDecimal())
+    public operator fun times(other: UShort) : Decimal = times(other.toDecimal())
+    public operator fun times(other: UByte) : Decimal = times(other.toDecimal())
 
     /*** operator div (/) ***/
 
     public operator fun div(other: Decimal) : Decimal {
         var (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
-        while ((thisd + thatd) < 15) {
-            if ((thism * (thism / thatm)) == thatm) break
+        while ((thisd - thatd) < 17) {
+            //println("div loop $thism:$thisd / $thatm:$thatd => ${thism/thatm}:${thisd-thatd}")
+            if ((thatm * (thism / thatm)) == thism) break // rest 0, done
+            if (abs(thism) > (Long.MAX_VALUE/10)) break // would overflow
             thism *=10; thisd++
         }
-        return Decimal(thism/thatm, thisd-thatd)
+        var resultm = (thism/thatm)
+        var resultd = (thisd-thatd)
+        //println("div corr $thism:$thisd / $thatm:$thatd => ${resultm}:${resultd}")
+        while (resultd > min(precision, 15)) {
+            resultm = (resultm+5)/10; resultd--
+        }
+    //    println("div done $thism:$thisd / $thatm:$thatd => ${resultm}:${resultd}")
+        return Decimal(resultm, resultd)
     }
     // floats
     public operator fun div(other: Double) : Decimal = div(other.toDecimal())
@@ -207,6 +239,10 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun div(other: Int) : Decimal = div(other.toDecimal())
     public operator fun div(other: Short) : Decimal = div(other.toDecimal())
     public operator fun div(other: Byte) : Decimal = div(other.toDecimal())
+    public operator fun div(other: ULong) : Decimal = div(other.toDecimal())
+    public operator fun div(other: UInt) : Decimal = div(other.toDecimal())
+    public operator fun div(other: UShort) : Decimal = div(other.toDecimal())
+    public operator fun div(other: UByte) : Decimal = div(other.toDecimal())
 
     /*** operator rem (%), but what about modulo/mod ? ***/
 
@@ -234,6 +270,10 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun rem(other: Int) : Decimal = rem(other.toDecimal())
     public operator fun rem(other: Short) : Decimal = rem(other.toDecimal())
     public operator fun rem(other: Byte) : Decimal = rem(other.toDecimal())
+    public operator fun rem(other: ULong) : Decimal = rem(other.toDecimal())
+    public operator fun rem(other: UInt) : Decimal = rem(other.toDecimal())
+    public operator fun rem(other: UShort) : Decimal = rem(other.toDecimal())
+    public operator fun rem(other: UByte) : Decimal = rem(other.toDecimal())
 
 
 
@@ -410,8 +450,8 @@ public open class Decimal : Number, Comparable<Decimal> {
     public constructor (input:Double): this(input.toString())
 
 
-    internal constructor (mant: Long, plcs: Int)  {
-        decimal64 = pack64(mant,plcs)
+    internal constructor (mantissa: Long, decimalplaces: Int)  {
+        decimal64 = pack64(mantissa,decimalplaces)
     }
 
 
