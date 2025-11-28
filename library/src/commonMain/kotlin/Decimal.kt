@@ -17,9 +17,14 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     internal fun pack64(mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false): Long {
-        val(normalizedMant, normalizedDplcs) = normalizeMant(mantissa, decimalplaces)
-        println("($precision, $mindecimals): pack64: $mantissa:$decimalplaces -> $normalizedMant:$normalizedDplcs")
-        return ((normalizedMant shl 4) or (normalizedDplcs and 0x0F).toLong())
+        var compactMant = mantissa
+        var compactDplcs = decimalplaces
+        if (!(omitNormalize)) {
+            val (cm, cd) = normalizeMant(mantissa, decimalplaces)
+            compactMant = cm
+            compactDplcs = cd
+        }
+        return ((compactMant shl 4) or (compactDplcs and 0x0F).toLong())
     }
 
 
@@ -29,24 +34,25 @@ public open class Decimal : Number, Comparable<Decimal> {
         // constructor imitations, just for JVM :-(
         // allows: Decimal(int), Decimal(Short), etc...
        // @JvmName("constFromByte")
-        public operator fun invoke(input:Byte): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:Byte): Decimal = Decimal(input.toLong(),0, true)
        // @JvmName("constfromUByte")
-        public operator fun invoke(input:UByte): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:UByte): Decimal = Decimal(input.toLong(),0, true)
        // @JvmName("constFromShort")
-        public operator fun invoke(input:Short): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:Short): Decimal = Decimal(input.toLong(),0,true)
        // @JvmName("constfromUShort")
-        public operator fun invoke(input:UShort): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:UShort): Decimal = Decimal(input.toLong(),0, true)
       //  @JvmName("constFromInt")
-        public operator fun invoke(input:Int): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:Int): Decimal = Decimal(input.toLong(),0,true)
       //  @JvmName("constfromUInt")
-        public operator fun invoke(input:UInt): Decimal= Decimal(input.toLong(),0)
+        public operator fun invoke(input:UInt): Decimal= Decimal(input.toLong(),0,true)
       //  @JvmName("constFromLong")
-        public operator fun invoke(input:Long): Decimal = Decimal(input,0)
+        public operator fun invoke(input:Long): Decimal = Decimal(input,0,true)
       //  @JvmName("constfromULong")
-        public operator fun invoke(input:ULong): Decimal = Decimal(input.toLong(),0)
+        public operator fun invoke(input:ULong): Decimal = Decimal(input.toLong(),0, true)
 
-        public const val MAX_VALUE: Long = 576460752303423487L
-        public const val MIN_VALUE: Long = -576460752303423488L
+        public const val MAX_VALUE: Long = +576460752303423487L
+        public const val MIN_VALUE: Long = -576460752303423487L
+        public const val NOT_A_NUMBER: Long = -576460752303423488L
         // static (common) variables and functions
 
         // for automatic rounding
@@ -67,7 +73,6 @@ public open class Decimal : Number, Comparable<Decimal> {
         public fun setMinDecimals(mind: Int) {
               mindecimals = if (mind < 0) 0; else mind
         }
-
 
         public enum class RoundingMode {
             UP,
@@ -443,15 +448,15 @@ public open class Decimal : Number, Comparable<Decimal> {
         val mantissa: Long = mantString.toLong()
         val decimalplaces: Int = decimPlcs
 
-        decimal64 = pack64(mantissa, decimalplaces)
+        decimal64 = pack64(mantissa, decimalplaces, false)
     }
 
     public constructor (input:Float): this(input.toString())
     public constructor (input:Double): this(input.toString())
 
 
-    internal constructor (mantissa: Long, decimalplaces: Int)  {
-        decimal64 = pack64(mantissa,decimalplaces)
+    internal constructor (mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false)  {
+        decimal64 = pack64(mantissa,decimalplaces, omitNormalize)
     }
 
 
