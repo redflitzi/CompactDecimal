@@ -8,7 +8,9 @@ import kotlin.text.get
 public open class Decimal : Number, Comparable<Decimal> {
 
     // 60bit long mantissa plus 4 Bit int exponent (decimal places):
-     private var decimal64: Long = 0L
+    private var decimal64: Long = 0L
+
+    internal fun getdecimal64() : Long = decimal64
 
     internal fun unpack64(): Pair<Long, Int> {
         val decimalplaces: Int = (decimal64 and 0x0FL).toInt()
@@ -20,13 +22,12 @@ public open class Decimal : Number, Comparable<Decimal> {
         var compactMant = mantissa
         var compactDplcs = decimalplaces
         if (!(omitNormalize)) {
-            val (cm, cd) = normalizeMant(mantissa, decimalplaces)
+            val (cm, cd) = normalizeDecimalPlaces(mantissa, decimalplaces)
             compactMant = cm
             compactDplcs = cd
         }
         return ((compactMant shl 4) or (compactDplcs and 0x0F).toLong())
     }
-
 
 
     public companion object {
@@ -53,6 +54,8 @@ public open class Decimal : Number, Comparable<Decimal> {
         public const val MAX_VALUE: Long = +576460752303423487L
         public const val MIN_VALUE: Long = -576460752303423487L
         public const val NOT_A_NUMBER: Long = -576460752303423488L
+
+        public val NaN: Decimal = Decimal(NOT_A_NUMBER,0, false)
         // static (common) variables and functions
 
         // for automatic rounding
@@ -74,6 +77,7 @@ public open class Decimal : Number, Comparable<Decimal> {
               mindecimals = if (mind < 0) 0; else mind
         }
 
+
         public enum class RoundingMode {
             UP,
             DOWN,
@@ -86,13 +90,13 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
     }
 
-    internal data class AllMants(val thism:Long, val thatm: Long, val deci: Int)
-    internal fun adjustMants(thism:Long, thisd: Int, thatm: Long, thatd: Int): AllMants {
+    internal data class EqualizedDecimalplaces(val thism:Long, val thatm: Long, val deci: Int)
+    internal fun equalizeDecimalplaces(thism:Long, thisd: Int, thatm: Long, thatd: Int): EqualizedDecimalplaces {
         // error handling still missing!
         var thismantissa = thism
-        var thisdecimalplaces=thisd
+        var thisdecimalplaces = thisd
         var thatmantissa = thatm
-        var thatdecimalplaces=thatd
+        var thatdecimalplaces = thatd
 
         // error handling still missing!
         while (thisdecimalplaces < thatdecimalplaces) {
@@ -104,16 +108,16 @@ public open class Decimal : Number, Comparable<Decimal> {
             thatdecimalplaces++
         }
 
-        return AllMants(thismantissa, thatmantissa, thisdecimalplaces)
+        return EqualizedDecimalplaces(thismantissa, thatmantissa, thisdecimalplaces)
     }
 
-    private fun normalizeMant(mant:Long, deci:Int): Pair<Long, Int>{
+    private fun normalizeDecimalPlaces(mant:Long, deci:Int): Pair<Long, Int>{
         var mantissa = mant
-        var decimalplaces = deci
+        var decimalplaces = if (mantissa == 0L) 0; else deci
         val maxdecimalplaces = min(precision, 15)
         val isnegative = (mantissa < 0)
 
-        if (isnegative) mantissa = 0-mantissa
+         if (isnegative) mantissa = 0-mantissa
 
         // most important, correct negative decimal places, as we dont support them
         while (decimalplaces < 0) {
@@ -154,18 +158,155 @@ public open class Decimal : Number, Comparable<Decimal> {
         return Decimal(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
 
+    private fun getdecimalstep(): Int {
+        val (_, decimalplaces) = unpack64()
+        var factor = 1
+        if (decimalplaces > 0 ) for (zahl in 1..decimalplaces) factor *= 10
+        return factor
+    }
 
     /**********  Operators ************/
+
+    /***  unary operators ***/
+
+    /*** operator unaryPlus (+) , unaryMinus (-) and not() (!) ***/
+    public operator fun unaryPlus() : Decimal = this
+
+    public operator fun unaryMinus() : Decimal {
+        var (mantissa, decimalplaces) = unpack64()
+        mantissa = (0-mantissa)
+        return Decimal(mantissa, decimalplaces, true)
+    }
+
+    public operator fun not() : Boolean = (decimal64 == 0L)
+
+    public operator fun inc() : Decimal {
+        val (mantissa, decimalplaces) = unpack64()
+        val decimalstep = getdecimalstep()
+        return Decimal(mantissa+decimalstep, decimalplaces, true)
+    }
+    public operator fun dec() : Decimal {
+        val (mantissa, decimalplaces) = unpack64()
+        val decimalstep = getdecimalstep()
+        return Decimal(mantissa-decimalstep, decimalplaces, true)
+    }
+
+    /*** operator plusAssign (+=) ***/
+
+    public operator fun plusAssign(other: Decimal) {
+        val (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
+        val (thismantissa,thatmantissa, decimalplaces) = equalizeDecimalplaces(thism, thisd, thatm, thatd)
+        this.decimal64 = pack64(thismantissa+thatmantissa, decimalplaces)
+    }
+    public operator fun plusAssign(other: Double): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: Float): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: Long): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: Int): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: Short): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: Byte): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: ULong): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: UInt): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: UShort): Unit = plusAssign(other.toDecimal())
+    public operator fun plusAssign(other: UByte): Unit = plusAssign(other.toDecimal())
+
+
+    /*** operator minusAssign (-=) ***/
+
+    public operator fun minusAssign(other: Decimal) {
+        val (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
+        val (thismantissa,thatmantissa, decimalplaces) = equalizeDecimalplaces(thism, thisd, thatm, thatd)
+        this.decimal64 = pack64(thismantissa-thatmantissa, decimalplaces)
+    }
+    public operator fun minusAssign(other: Double): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: Float): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: Long): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: Int): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: Short): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: Byte): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: ULong): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: UInt): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: UShort): Unit = minusAssign(other.toDecimal())
+    public operator fun minusAssign(other: UByte): Unit = minusAssign(other.toDecimal())
+
+
+    /*** operator timesAssign (*=) ***/
+
+    public operator fun timesAssign(other: Decimal) {
+        val (thismantissa, thisdecimalplaces) = unpack64()
+        val (thatmantissa, thatdecimalplaces) = other.unpack64()
+        this.decimal64 = pack64(thismantissa*thatmantissa, thisdecimalplaces+thatdecimalplaces)
+    }
+    public operator fun timesAssign(other: Double): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: Float): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: Long): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: Int): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: Short): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: Byte): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: ULong): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: UInt): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: UShort): Unit = timesAssign(other.toDecimal())
+    public operator fun timesAssign(other: UByte): Unit = timesAssign(other.toDecimal())
+
+
+    /*** operator divAssign (/=) ***/
+
+    public operator fun divAssign(other: Decimal) {
+        var (thism, thisd) = unpack64()
+        val (thatm, thatd) = other.unpack64()
+        while ((thisd - thatd) < 17) {
+            if ((thatm * (thism / thatm)) == thism) break // rest 0, done
+            if (abs(thism) > (Long.MAX_VALUE/10)) break // would overflow
+            thism *=10; thisd++
+        }
+        var resultm = (thism/thatm)
+        var resultd = (thisd-thatd)
+        while (resultd > min(precision, 15)) {
+            resultm = (resultm+5)/10; resultd--
+        }
+        this.decimal64 = pack64(resultm, resultd)
+    }
+    public operator fun divAssign(other: Double): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: Float): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: Long): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: Int): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: Short): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: Byte): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: ULong): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: UInt): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: UShort): Unit = divAssign(other.toDecimal())
+    public operator fun divAssign(other: UByte): Unit = divAssign(other.toDecimal())
+
+
+    /*** operator remAssign (%=) ***/
+
+    public operator fun remAssign(other:Decimal) {
+        val divisionresult = (this.integerdivided(other))
+        this.decimal64 = (this - (other * divisionresult)).getdecimal64()
+    }
+    public operator fun remAssign(other: Double): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: Float): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: Long): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: Int): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: Short): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: Byte): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: ULong): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: UInt): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: UShort): Unit = remAssign(other.toDecimal())
+    public operator fun remAssign(other: UByte): Unit = remAssign(other.toDecimal())
+
+
+    /****************************************************/
 
     /*** operator plus (+) ***/
 
     public operator fun plus(other: Decimal) : Decimal {
         val (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
-        val (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, decimalplaces) = equalizeDecimalplaces(thism, thisd, thatm, thatd)
         return Decimal(thismantissa+thatmantissa, decimalplaces)
     }
-    // floats
     public operator fun plus(other: Double) : Decimal = plus(other.toDecimal())
     public operator fun plus(other: Float) : Decimal = plus(other.toDecimal())
     public operator fun plus(other: Long) : Decimal = plus(other.toDecimal())
@@ -182,10 +323,9 @@ public open class Decimal : Number, Comparable<Decimal> {
     public operator fun minus(other: Decimal) : Decimal {
         val (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
-        val (thismantissa,thatmantissa, decimalplaces) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, decimalplaces) = equalizeDecimalplaces(thism, thisd, thatm, thatd)
         return Decimal(thismantissa-thatmantissa, decimalplaces)
     }
-    // floats
     public operator fun minus(other: Double) : Decimal = minus(other.toDecimal())
     public operator fun minus(other: Float) : Decimal = minus(other.toDecimal())
     public operator fun minus(other: Long) : Decimal = minus(other.toDecimal())
@@ -205,7 +345,6 @@ public open class Decimal : Number, Comparable<Decimal> {
         val (thatmantissa, thatdecimalplaces) = other.unpack64()
         return Decimal(thismantissa*thatmantissa, thisdecimalplaces+thatdecimalplaces)
     }
-    // floats
     public operator fun times(other: Double) : Decimal = times(other.toDecimal())
     public operator fun times(other: Float) : Decimal = times(other.toDecimal())
     public operator fun times(other: Long) : Decimal = times(other.toDecimal())
@@ -223,21 +362,17 @@ public open class Decimal : Number, Comparable<Decimal> {
         var (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
         while ((thisd - thatd) < 17) {
-            //println("div loop $thism:$thisd / $thatm:$thatd => ${thism/thatm}:${thisd-thatd}")
             if ((thatm * (thism / thatm)) == thism) break // rest 0, done
             if (abs(thism) > (Long.MAX_VALUE/10)) break // would overflow
             thism *=10; thisd++
         }
         var resultm = (thism/thatm)
         var resultd = (thisd-thatd)
-        //println("div corr $thism:$thisd / $thatm:$thatd => ${resultm}:${resultd}")
         while (resultd > min(precision, 15)) {
             resultm = (resultm+5)/10; resultd--
         }
-    //    println("div done $thism:$thisd / $thatm:$thatd => ${resultm}:${resultd}")
         return Decimal(resultm, resultd)
     }
-    // floats
     public operator fun div(other: Double) : Decimal = div(other.toDecimal())
     public operator fun div(other: Float) : Decimal = div(other.toDecimal())
     public operator fun div(other: Long) : Decimal = div(other.toDecimal())
@@ -251,11 +386,11 @@ public open class Decimal : Number, Comparable<Decimal> {
 
     /*** operator rem (%), but what about modulo/mod ? ***/
 
-    internal fun intdiv(other: Decimal) : Decimal {
+    internal fun integerdivided(other: Decimal) : Decimal {
         var (thism, thisd) = unpack64()
         var (thatm, thatd) = other.unpack64()
         // preserve from running endlessly if thism cannot reach thatm!
-        if (thatm > (MAX_VALUE/10)) {
+        if (thatm > (Long.MAX_VALUE/10)) {
             thatm /= 10; thatd--
         }
         while (thism < thatm){
@@ -266,8 +401,8 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     public operator fun rem(other:Decimal) : Decimal {
-       val divdec = (this.intdiv(other))
-        return (this - (other * divdec))
+       val divisionresult = (this.integerdivided(other))
+        return (this - (other * divisionresult))
     }
     public operator fun rem(other: Double) : Decimal = rem(other.toDecimal())
     public operator fun rem(other: Float) : Decimal = rem(other.toDecimal())
@@ -383,43 +518,28 @@ public open class Decimal : Number, Comparable<Decimal> {
         return decimalstring
     }
 
-/*
-    fun toFormattedString() {
+    /*** Comparable interface, and equality operators ***/
 
-        var decstring = this.toPlainString()
-
-        // now to the optics
-        // oder ist das nur ein Anzeigeproblem und gehört hier nicht her / nicht zur class?
-        if (mindecimalplaces > 0) {
-            val  missingplaces = mindecimalplaces - decplaces
-            if (decplaces <= 0) decstring+='.'
-            decstring += ("0".repeat(missingplaces))
-
-        } else if (mindecimalplaces < 0) { // does this exist?
-            // von rechts kürzen = evtl. mit round() anzeigen
-        } else { /* mindecimalplaces == 0 */
-
-            // no reason to touch.
-            // if there is no minimum, everything is ok
-
-        }
-
-        return decstring
-    }
-
- */
-
-    override operator fun compareTo(other: Decimal): Int {
+    override public operator fun compareTo(other: Decimal): Int {
+        if (this.decimal64 == other.decimal64) return 0
         val (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
 
-        val (thismantissa,thatmantissa, _) = adjustMants(thism, thisd, thatm, thatd)
+        val (thismantissa,thatmantissa, _) = equalizeDecimalplaces(thism, thisd, thatm, thatd)
 
         return when {
             (thismantissa > thatmantissa) -> 1
             (thismantissa < thatmantissa) -> -1
             else -> 0
         }
+    }
+
+    override public operator fun equals(other: Any?) : Boolean
+        = ((other != null) and (other is Decimal)  and (this.decimal64 == (other as Decimal).decimal64))
+
+    override public fun hashCode(): Int {
+        return ((this.decimal64 ushr 32).toInt() xor (this.decimal64 and 0x00000000FFFFFFFFL).toInt())
+
     }
 
     /******************  Constructors  *******************/
@@ -453,7 +573,6 @@ public open class Decimal : Number, Comparable<Decimal> {
 
     public constructor (input:Float): this(input.toString())
     public constructor (input:Double): this(input.toString())
-
 
     internal constructor (mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false)  {
         decimal64 = pack64(mantissa,decimalplaces, omitNormalize)
