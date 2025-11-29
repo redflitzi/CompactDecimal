@@ -1,12 +1,11 @@
 package io.github.redflitzi.compactdecimal
 
 import Dc
-import toDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class DecimalOperatorTest {
+class ArithmeticOperatorsTest {
 
     @Test
     fun opPlusTests() {
