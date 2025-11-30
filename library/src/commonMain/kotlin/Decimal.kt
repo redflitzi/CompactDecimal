@@ -1,3 +1,5 @@
+package io.github.redflitzi.compactdecimal
+
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.text.get
@@ -88,6 +90,17 @@ public open class Decimal : Number, Comparable<Decimal> {
             HALF_EVEN,
             UNNECESSARY
         }
+
+        public fun abs(d : Decimal): Decimal {
+            return d.abs()
+        }
+
+
+    }  // end of companion object
+
+    public fun abs() : Decimal  {
+        val (mantissa, decimalplaces) = unpack64()
+        return Decimal(0-mantissa, decimalplaces)
     }
 
     internal data class EqualizedDecimalplaces(val thism:Long, val thatm: Long, val deci: Int)
@@ -143,6 +156,8 @@ public open class Decimal : Number, Comparable<Decimal> {
 
         return Pair(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
+
+
 
     /**/
     public fun round(localprecision: Int, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
@@ -580,5 +595,11 @@ public open class Decimal : Number, Comparable<Decimal> {
 
 
 }
+
+
+public fun abs(d : Decimal): Decimal {
+    return d.abs()
+}
+
 
 

@@ -1,8 +1,7 @@
 package io.github.redflitzi.compactdecimal
 
-import Dc
-import Decimal
-import toDecimal
+import io.github.redflitzi.compactdecimal.*
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

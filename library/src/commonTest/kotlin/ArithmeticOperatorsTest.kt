@@ -1,6 +1,6 @@
 package io.github.redflitzi.compactdecimal
 
-import Dc
+import io.github.redflitzi.compactdecimal.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,6 +23,26 @@ class ArithmeticOperatorsTest {
             "15.78",
             (10.4.Dc + 5.38.Dc).toPlainString(),
             "operator (10.4.Dc + 5.38.Dc)"
+        )
+        assertEquals(
+            "0.03",
+            (0.01 + 0.02).toString(),
+            "Double (0.01 + 0.02)"
+        )
+        assertEquals(
+            "0.03",
+            (0.01.Dc + 0.02.Dc).toPlainString(),
+            "operator (0.01Dc + 0.02.Dc)"
+        )
+        assertEquals(  // this is (Int plus Decimal)!
+            "1.03",
+            (1 + 0.03.Dc).toPlainString(),
+            "operator (1 + 0.03.Dc)"
+        )
+        assertEquals(  // this is (Int plus Decimal)!
+            1.03.Dc,
+            1 + 0.03.Dc,
+            "plain (1 + 0.03.Dc)"
         )
     }
 
@@ -67,7 +87,7 @@ class ArithmeticOperatorsTest {
             (1.3.Dc * 2).toPlainString(),
             "operator with Int (1.3.Dc * 2)"
         )
-        var mydeci = 1.3.Dc * 2
+        val mydeci = 1.3.Dc * 2
         assertEquals(
             "2.6",
             mydeci.toPlainString(),
