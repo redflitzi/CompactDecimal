@@ -2,7 +2,6 @@ package io.github.redflitzi.compactdecimal
 
 import kotlin.math.abs
 import kotlin.math.min
-import kotlin.text.get
 
 //import kotlin.reflect.jvm.jvmName
 
@@ -160,6 +159,29 @@ public open class Decimal : Number, Comparable<Decimal> {
 
 
     /**/
+    public fun roundHalfEven(localprecision: Int = 3, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
+        val (mant, deci) = unpack64()
+        var mantissa = mant
+        var decimalplaces = deci
+        val maxdecimalplaces = min(localprecision, 15)
+        while (decimalplaces > maxdecimalplaces) {
+            if ((mantissa == 0L) or (decimalplaces == 0)) break
+
+            // https://lemire.me/blog/2020/04/16/rounding-integers-to-even-efficiently/
+            // https://github.com/lemire/Code-used-on-Daniel-Lemire-s-blog/blob/master/2020/04/16/round.c
+            // numerator n = mantissa, divisor d = 10, ist das richtig?
+            var divisor: Long = 10
+            var offsetnumerator = (mantissa + (divisor / 2))
+            var roundup = (offsetnumerator / divisor)
+            var down = roundup - (roundup and 1)
+            var ismultiple = if ((offsetnumerator % divisor) == 0L) 1L; else 0L
+             //mantissa = if (ismultiple && iseven) roundup - (roundup and 1) else roundup
+            mantissa = (divisor  or (roundup xor ismultiple)) and roundup;
+            decimalplaces--
+        }
+        return Decimal(mantissa, if (mantissa == 0L)  0 else decimalplaces)
+    }
+
     public fun round(localprecision: Int, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
         val (mant, deci) = unpack64()
         var mantissa = mant
