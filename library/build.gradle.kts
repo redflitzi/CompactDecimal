@@ -93,7 +93,6 @@ kotlin {
                 // Wasm-specific dependencies
             }
         }
-
     }
 }
 
@@ -105,10 +104,10 @@ mavenPublishing {
     coordinates(group.toString(), "library", version.toString())
 
     pom {
-        name = "CompactDecimals Library"
-        description = "Multiplatform CompactDecimals library."
+        name = "CompactDecimal Library"
+        description = "Multiplatform Decimal library."
         inceptionYear = "2025"
-        url = "https://github.com/redflitzi/CompactDecimals/"
+        url = "https://github.com/redflitzi/CompactDecimal/"
         licenses {
             license {
                 name = "XXX"
