@@ -48,7 +48,7 @@ class DecimalCoreTest {
         Decimal.setPrecision(15) // default
     }
 
-    @Test fun DoubleConstructorTests() {
+    @Test fun doubleConstructorTests() {
 
         Decimal.setPrecision(15) // default
         assertEquals(

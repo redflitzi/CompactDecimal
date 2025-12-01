@@ -1,11 +1,10 @@
 package io.github.redflitzi.compactdecimal
 
-import io.github.redflitzi.compactdecimal.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class ArithmeticOperatorsTest {
+class ArithmeticBinaryOperatorsTest {
 
     @Test
     fun opPlusTests() {

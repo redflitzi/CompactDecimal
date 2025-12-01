@@ -1,7 +1,5 @@
 package io.github.redflitzi.compactdecimal
 
-import io.github.redflitzi.compactdecimal.*
-
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -10,38 +8,50 @@ class UnaryOperatorsTest {
 
     @Test
     fun opPlusPlusTests() {
-        var d: Decimal = Decimal(11)
+        var d = Decimal(11)
         assertEquals(
             Decimal(11),
             d++,
-            "op Dc++" // ++ happens after evaluation
+            "op Dc++" // ++ inc happens after evaluation
         )
         assertEquals(
             Decimal(13),
             ++d,
             "op ++Dc" // ++ happens before evaluation
         )
+        d = 12.777.Dc
+        assertEquals(
+            Decimal(13.777),
+            ++d,
+            " op 12.777.Dc, ++d" // ++ happens before evaluation
+        )
     }
 
     @Test
     fun opMinusMinusTests() {
-        var d: Decimal = Decimal(11)
+        var d = Decimal(11)
         assertEquals(
             Decimal(11),
             d--,
-            "op Dc--"
+            "op Dc--" // -- dec happens before evaluation
         )
         assertEquals(
             Decimal(9),
             --d,
             "op --Dc"
         )
+        d = 12.777.Dc
+        assertEquals(
+            Decimal(11.777),
+            --d,
+            " op 12.777.Dc, --d" // -- dec happens before evaluation
+        )
     }
 
 
     @Test
     fun absTests() {
-        var d: Decimal = Decimal(-11)
+        val d = Decimal(-11)
         assertEquals(
             Decimal(11),
             Decimal.abs(d),
@@ -49,13 +59,18 @@ class UnaryOperatorsTest {
         )
         assertEquals(
             1.23456789.Dc,
-            Decimal.abs(-1.23456789.Dc),
+            Decimal.abs((-1.23456789).Dc),
             "abs(-1.23456789.Dc)"
         )
         assertEquals(
             1.23456789.Dc,
             abs((-1.23456789).Dc),
             "abs(-1.23456789.Dc)"
+        )
+        assertEquals(
+            1.23456789.Dc,
+            abs("-1.23456789".Dc),
+            "abs(''-1.23456789'')"
         )
 
     }

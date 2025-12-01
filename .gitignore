@@ -6,7 +6,7 @@ build
 captures
 .externalNativeBuild
 .cxx
-local.properties
+local.propertiesx
 xcuserdata
 .kotlin
 #So we don't accidentally commit our private keys
