@@ -1,18 +1,11 @@
 package io.github.redflitzi.compactdecimal
 
-import io.github.redflitzi.compactdecimal.*
-
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DecimalCoreTest {
 
     @Test fun intConstructorTests() {
-        assertEquals(
-            "15",
-            Decimal(15).toPlainString(),
-            "intConstructor: 15"
-        )
         assertEquals(
             "15",
             Decimal(15L).toPlainString(),
@@ -55,22 +48,86 @@ class DecimalCoreTest {
         Decimal.setPrecision(15) // default
     }
 
+    @Test fun DoubleConstructorTests() {
+
+        Decimal.setPrecision(15) // default
+        assertEquals(
+            "100000.47",
+            Decimal(100000.47).toPlainString(),
+            "DoubleConstructor: 100000.47"
+        )
+        assertEquals(
+            "15.00000001",
+            Decimal(15.00000001).toPlainString(),
+            "DoubleConstructor: 15"
+        )
+        assertEquals(
+            "15.000000000001",
+            Decimal(15.000000000001).toPlainString(),
+            "DoubleConstructor: 15 (d=12)"
+        )
+        assertEquals(
+            "15.0000000000001",
+            Decimal(15.0000000000001).toPlainString(),
+            "DoubleConstructor: 15 (d=13)"
+        )
+        assertEquals(
+            "15.00000000000006",
+            15.00000000000006.toString(),
+            "15 Double (d=14) toString()"
+        )
+        assertEquals(
+            "15.00000000000001",
+            Decimal(15.00000000000001).toPlainString(),
+            "DoubleConstructor: 15 (d=14)"
+        )
+        Decimal.setPrecision(5)
+        assertEquals(
+            "15.000001",
+            15.000001.toString(),
+            "15 Double (p=6) toString()"
+        )
+        assertEquals(
+            "15",
+            15.000001.Dc.toString(),  // 6 places when precision is 5
+            "15.000001 Double (d=6, p=5) toString()"
+        )
+        Decimal.setPrecision(6)
+        assertEquals(
+            "15.000001",
+            15.000001.Dc.toString(),  // 6 places when precision is 6
+            "15.000001 Double (d=6, p=6) toString()"
+        )
+        assertEquals(
+            "15",
+            Decimal(15.000000000000009).toPlainString(),
+            "DoubleConstructor: 15.000000000000009 (d=15, p=6)"
+        )
+        Decimal.setPrecision(15)
+        assertEquals(
+            "15.000000000000009",
+            Decimal(15.000000000000009).toPlainString(),
+            "DoubleConstructor: 15.000000000000009 (d=15, p=15)"
+        )
+        assertEquals(
+            "15",
+            Decimal(15).toPlainString(),
+            "intConstructor: 15"
+        )
+    }
+
     @Test fun floatConstructorTests() {
 
+        Decimal.setPrecision(15) // default
         assertEquals(
             "100000.47",
             Decimal(100000.47F).toPlainString(),
             "floatConstructor: 10000000.47"
         )
         assertEquals(
-            "10000000.47",
-            Decimal(10000000.47).toPlainString(),
-            "doubleConstructor: 10000000.47"
-        )
-        assertEquals(
-            "10000000.47",
-            (10000000.47).toDecimal().toPlainString(),
-            "double.toDecimal(): 10000000.47"
+            "10000.47",
+            (10000.47F).toDecimal().toPlainString(),
+            "Float.toDecimal(): 10000.47"
         )
         assertEquals(
             "15.3",

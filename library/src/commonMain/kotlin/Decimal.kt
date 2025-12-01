@@ -23,7 +23,7 @@ public open class Decimal : Number, Comparable<Decimal> {
     internal fun pack64(mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false): Long {
         var compactMant = mantissa
         var compactDplcs = decimalplaces
-        if (!(omitNormalize)) {
+        if ((decimalplaces != 0) and !(omitNormalize)) {
             val (cm, cd) = normalizeDecimalPlaces(mantissa, decimalplaces)
             compactMant = cm
             compactDplcs = cd
@@ -483,12 +483,10 @@ public open class Decimal : Number, Comparable<Decimal> {
         var decimalString: String
         val prefix : String
         if (mantissa < 0) {
-            decimalString = (0L - mantissa).toString(10)
-            prefix = "-"
+            decimalString = (0L - mantissa).toString(10); prefix = "-"
         }
         else {
-            decimalString = mantissa.toString(10)
-            prefix = ""
+            decimalString = mantissa.toString(10); prefix = ""
         }
 
         if (decimalplaces > 0) { // decimal digits exist, insert a dot
@@ -583,7 +581,7 @@ public open class Decimal : Number, Comparable<Decimal> {
         val mantissa: Long = mantString.toLong()
         val decimalplaces: Int = decimPlcs
 
-        decimal64 = pack64(mantissa, decimalplaces, false)
+        decimal64 = pack64(mantissa, decimalplaces)
     }
 
     public constructor (input:Float): this(input.toString())

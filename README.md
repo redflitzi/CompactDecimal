@@ -24,6 +24,16 @@ Just use it like any other numeric type, with the extension *".Dc"*.
 
 Like *5.Dc* or *17.48.Dc*.
 
+When giving many decimal places, e.g. *15.000000000000001.Dc* (15 decimal places) rounding errors
+because of the inaccuracy and rounding problems of Float and Double numbers,
+better use: *"15.000000000000001".Dc*. This is a String constructor and avoids the Float/Double problems.
+
+
+### Import
+``` kotlin
+import io.github.redflitzi.compactdecimal.*
+```
+
 
 ### Precision and display
 
