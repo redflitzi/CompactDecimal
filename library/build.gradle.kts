@@ -12,6 +12,7 @@ plugins {
 }
 
 group = "io.github.redflitzi"
+//artifact="compact-decimal"
 version = "1.0.0"
 
 
@@ -101,7 +102,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "library", version.toString())
+    coordinates(group.toString(), "compact-decimal", version.toString())
 
     pom {
         name = "CompactDecimal Library"

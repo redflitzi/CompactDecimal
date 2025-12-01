@@ -21,14 +21,14 @@ public open class Decimal : Number, Comparable<Decimal> {
     }
 
     internal fun pack64(mantissa: Long, decimalplaces: Int, omitNormalize:Boolean = false): Long {
-        var compactMant = mantissa
-        var compactDplcs = decimalplaces
+        var compactMantissa = mantissa
+        var compactDecimalPlaces = decimalplaces
         if ((decimalplaces != 0) and !(omitNormalize)) {
             val (cm, cd) = normalizeDecimalPlaces(mantissa, decimalplaces)
-            compactMant = cm
-            compactDplcs = cd
+            compactMantissa = cm
+            compactDecimalPlaces = cd
         }
-        return ((compactMant shl 4) or (compactDplcs and 0x0F).toLong())
+        return ((compactMantissa shl 4) or (compactDecimalPlaces and 0x0F).toLong())
     }
 
 
@@ -57,7 +57,7 @@ public open class Decimal : Number, Comparable<Decimal> {
         public const val MIN_VALUE: Long = -576460752303423487L
         public const val NOT_A_NUMBER: Long = -576460752303423488L
 
-        public val NaN: Decimal = Decimal(NOT_A_NUMBER,0, false)
+        public val NaN: Decimal = Decimal(NOT_A_NUMBER,0, true)
         // static (common) variables and functions
 
         // for automatic rounding
@@ -427,7 +427,7 @@ public open class Decimal : Number, Comparable<Decimal> {
 
     /*** Comparable interface, and equality operators ***/
 
-    override public operator fun compareTo(other: Decimal): Int {
+    public override operator fun compareTo(other: Decimal): Int {
         if (this.decimal64 == other.decimal64) return 0
         val (thism, thisd) = unpack64()
         val (thatm, thatd) = other.unpack64()
@@ -441,10 +441,10 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
     }
 
-    override public operator fun equals(other: Any?) : Boolean
+    public override operator fun equals(other: Any?) : Boolean
         = ((other != null) and (other is Decimal)  and (this.decimal64 == (other as Decimal).decimal64))
 
-    override public fun hashCode(): Int {
+    public override fun hashCode(): Int {
         return ((this.decimal64 ushr 32).toInt() xor (this.decimal64 and 0x00000000FFFFFFFFL).toInt())
 
     }

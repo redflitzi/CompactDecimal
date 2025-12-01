@@ -57,7 +57,7 @@ Use maven dependency:
 ```xml
 <dependency>
     <groupId>io.github.redflitzi</groupId>
-    <artifactId>compactdecimal</artifactId>
+    <artifactId>compact-decimal</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
