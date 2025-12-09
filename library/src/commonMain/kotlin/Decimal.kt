@@ -11,7 +11,7 @@ public open class Decimal : Number, Comparable<Decimal> {
     // 60bit long mantissa plus 4 Bit int exponent (decimal places):
     private var decimal64: Long = 0L
 
-    internal fun getdecimal64() : Long = decimal64
+    internal fun getDecimal64() : Long = decimal64
 
     internal fun unpack64(): Pair<Long, Int> {
         val decimalplaces: Int = (decimal64 and 0x0FL).toInt()
@@ -60,12 +60,12 @@ public open class Decimal : Number, Comparable<Decimal> {
         // static (common) variables and functions
 
         // for automatic rounding
-        private var precision: Int = 15 /* 0 - 15 */
+        private var autoprecision: Int = 15 /* 0 - 15 */
         public fun setPrecision(prec: Int) {
             /*
             if ((prec < 0) or (prec > 15)) {  // Error! wie?  }
             */
-            precision = if (prec < 0) {
+            autoprecision = if (prec < 0) {
                 0
             } else if (prec > 15) {
                 15
@@ -78,6 +78,8 @@ public open class Decimal : Number, Comparable<Decimal> {
               mindecimals = if (mind < 0) 0; else mind
         }
 
+
+    }  // end of companion object
 
         public enum class RoundingMode {
             UP,
@@ -94,8 +96,6 @@ public open class Decimal : Number, Comparable<Decimal> {
             return d.abs()
         }
 
-
-    }  // end of companion object
 
     public fun abs() : Decimal  {
         val (mantissa, decimalplaces) = unpack64()
@@ -126,12 +126,12 @@ public open class Decimal : Number, Comparable<Decimal> {
     private fun normalizeDecimalPlaces(mant:Long, deci:Int): Pair<Long, Int>{
         var mantissa = mant
         var decimalplaces = if (mantissa == 0L) 0; else deci
-        val maxdecimalplaces = min(precision, 15)
+        val maxdecimalplaces = min(autoprecision, 15)
         val isnegative = (mantissa < 0)
 
          if (isnegative) mantissa = 0-mantissa
 
-        // most important, correct negative decimal places, as we dont support them
+        // most important, correct negative decimal places, as we don't support them
         while (decimalplaces < 0) {
             mantissa *=10
             decimalplaces++
@@ -158,7 +158,7 @@ public open class Decimal : Number, Comparable<Decimal> {
 
 
 
-    /**/
+    /*
     public fun roundHalfEven(localprecision: Int = 3, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
         val (mant, deci) = unpack64()
         var mantissa = mant
@@ -181,6 +181,7 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
         return Decimal(mantissa, if (mantissa == 0L)  0 else decimalplaces)
     }
+    */
 
     public fun round(localprecision: Int, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
         val (mant, deci) = unpack64()
@@ -198,8 +199,14 @@ public open class Decimal : Number, Comparable<Decimal> {
     private fun getdecimalstep(): Int {
         val (_, decimalplaces) = unpack64()
         var factor = 1
-        if (decimalplaces > 0 ) for (zahl in 1..decimalplaces) factor *= 10
+        if (decimalplaces > 0 ) repeat (decimalplaces) {factor *= 10}
         return factor
+    }
+
+    public fun setScale(decimplcs: Int, rounding: RoundingMode = RoundingMode.HALF_UP): Decimal {
+        val (mant, deci) = unpack64()
+        val (newmant, newdeci) = roundWithMode(mant, deci, decimplcs, rounding)
+        return Decimal(mant, if (newmant == 0L)  0 else newdeci)
     }
 
     /**********  Operators ************/
@@ -299,7 +306,7 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
         var resultm = (thism/thatm)
         var resultd = (thisd-thatd)
-        while (resultd > min(precision, 15)) {
+        while (resultd > min(autoprecision, 15)) {
             resultm = (resultm+5)/10; resultd--
         }
         return Decimal(resultm, resultd)
