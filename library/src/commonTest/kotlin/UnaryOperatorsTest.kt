@@ -54,12 +54,12 @@ class UnaryOperatorsTest {
         val d = Decimal(-11)
         assertEquals(
             Decimal(11),
-            Decimal.abs(d),
+            abs(d),
             "abs(-11.Dc)"
         )
         assertEquals(
             1.23456789.Dc,
-            Decimal.abs((-1.23456789).Dc),
+            abs((-1.23456789).Dc),
             "abs(-1.23456789.Dc)"
         )
         assertEquals(

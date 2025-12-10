@@ -89,13 +89,18 @@ class DecimalCoreTest {
         )
         assertEquals(
             "15",
-            15.000001.Dc.toString(),  // 6 places when precision is 5
+            15.000001.Dc.toString(),  // 6 places when precision is 5!
             "15.000001 Double (d=6, p=5) toString()"
+        )
+        assertEquals(
+            "15.00001",
+            15.000009.Dc.toString(),  // 6 places when precision is 5!
+            "15.000009 Double (d=6, p=5) toString()"
         )
         Decimal.setPrecision(6)
         assertEquals(
             "15.000001",
-            15.000001.Dc.toString(),  // 6 places when precision is 6
+            15.000001.Dc.toString(),  // 6 places when precision is 6!
             "15.000001 Double (d=6, p=6) toString()"
         )
         assertEquals(
