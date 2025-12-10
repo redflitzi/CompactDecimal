@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 class Rounding_UP_Tests {
 
     @Test
-    fun opRoundingTestsUp() {
+    fun decimalRoundingTests_UP() {
         Decimal.setRoundingMode(Decimal.RoundingMode.UP)
         //Decimal.setPrecision(0)
         assertEquals(
@@ -32,6 +32,26 @@ class Rounding_UP_Tests {
             "6",
             "5.5".Dc.setScale(0).toPlainString(),
             "operator 5.5=> 6"
+        )
+        assertEquals(
+            "-5600",
+            "-5555.12".Dc.setScale(-2).toPlainString(),
+            "round(-2)  -5555.12 => -5600"
+        )
+        assertEquals(
+            "-5100",
+            "-5000.02".Dc.setScale(-2).toPlainString(),
+            "round(-2)  -5000.02 => -5100"
+        )
+        assertEquals(
+            "-5000",
+            "-5000.00".Dc.setScale(-2).toPlainString(),
+            "round(-2)  -5000.00 => -5000"
+        )
+        assertEquals(
+            "-6",
+            "-5.5".Dc.setScale(0).toPlainString(),
+            "operator -5.5=> -6"
         )
         assertEquals(
             "3",
