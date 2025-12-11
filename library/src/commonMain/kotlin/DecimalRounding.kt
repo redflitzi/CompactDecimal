@@ -1,8 +1,10 @@
 package io.github.redflitzi.compactdecimal
 
+import kotlin.math.abs
+
 internal fun getPower10(exponent: Int) : Long { // only for between 0 and 15!!!
     var power: Long = 1
-    if (exponent !in 0 .. 15) return 0 // solve somehow else, but generally shouldn't happen
+    // if (exponent !in 0 .. 15) return 0 // solve somehow else, but generally shouldn't happen
     repeat (exponent) { power *= 10 }
     return power
 }
@@ -42,7 +44,21 @@ internal fun roundWithMode(mantissa: Long, decimals: Int, desiredprecision: Int,
 
     println("Lower divisor: $lower_divisor, mult:$mult, hint:$hint , corr: $lower_corrig")
 
-    var newmantissa = ((mantissa+lower_corrig) / lower_divisor)
+    var even_decr: Int = 0
+
+    if (roundingmode == Decimal.RoundingMode.HALF_EVEN) {
+       // if ((mantissa % lower_divisor) == 5)
+        var middle = (abs(mantissa % lower_divisor) == lower_corrig)
+        println("HALF_EVEN: ${(mantissa % lower_divisor)}, corrig: ${(lower_corrig)}, middle: ${middle}")
+        if (middle) {
+            var blub = (((mantissa+lower_corrig) / lower_divisor) % 10)
+            println("Peep! (($mantissa+$lower_corrig) / $lower_divisor) = ${((mantissa+lower_corrig) / lower_divisor)}, Next digit is: ${blub}")
+            if ((blub % 2) != 0L) even_decr = -1
+            println("decrement: ${even_decr}")
+        }
+    }
+
+    var newmantissa = ((mantissa+lower_corrig) / lower_divisor) + even_decr
     var newdecimals = if (desiredprecision >= 0) desiredprecision; else 0;
     println("new: m:$newmantissa, d:$newdecimals")
 

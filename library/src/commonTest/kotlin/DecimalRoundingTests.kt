@@ -7,6 +7,52 @@ import kotlin.test.assertEquals
 // Tests according to:
 // https://developer.android.com/reference/java/math/RoundingMode
 
+class Rounding_HALF_EVEN_Tests {
+
+    @Test
+    fun decimalRoundingTests_HALF_EVEN() {
+        Decimal.setRoundingMode(Decimal.RoundingMode.HALF_EVEN)
+        //Decimal.setPrecision(0)
+        assertEquals(
+            "56",
+            "55.50".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  55.50 => 56"
+        )
+        assertEquals(
+            "54",
+            "54.50".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  54.50 => 54"
+        )
+        assertEquals(
+            "6",
+            "5.5".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  5.5 => 6"
+        )
+        assertEquals(
+            "6",
+            "5.6".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  5.6 => 6"
+        )
+        assertEquals(
+            "4",
+            "4.5".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  4.5 => 4"
+        )
+        assertEquals(
+            "106",
+            "106.5".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  106.5 => 106"
+        )
+        assertEquals(
+            "-106",
+            "-106.5".Dc.setScale(0).toPlainString(),
+            "HALF_EVEN round(0)  -106.5 => -106"
+        )
+    }
+}
+
+
+
 class Rounding_UP_Tests {
 
     @Test
