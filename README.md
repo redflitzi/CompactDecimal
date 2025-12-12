@@ -11,7 +11,7 @@ The Decimal class implements Number and Comparable interfaces, with a 64 Bit foo
 
 The footprint consists of a 60 bit mantissa, and a 4 bit exponent
 
-It's value range is from -576460752303423488 to +576460752303423487.  
+It's value range is from -576460752303423487 to +576460752303423487.  
 
 0 - 15 decimal places are supported.
 

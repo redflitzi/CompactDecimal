@@ -132,39 +132,6 @@ public open class Decimal : Number, Comparable<Decimal> {
         return EqualizedDecimals(thismantissa, thatmantissa, thisdecimals)
     }
 
-    private fun normalizeDecimalPlaces(mant:Long, deci:Int): Pair<Long, Int>{
-        var mantissa = mant
-        var decimals = if (mantissa == 0L) 0; else deci
-        val maxdecimals = min(autoPrecision, 15)
-        val isnegative = (mantissa < 0)
-
-        if (isnegative) mantissa = 0-mantissa
-
-        // most important, correct negative decimal places, as we don't support them!
-        while (decimals < 0) {
-            mantissa *=10
-            decimals++
-        }
-
-        // round to desired precision, HALF_UP (later on, use roundmode instead?)
-        while ((decimals > 0) and (mantissa != 0L) and ((decimals > maxdecimals) or ((mantissa % 10) == 0L))) {
-            mantissa = (mantissa+5) / 10
-            decimals--
-        }
-
-        // at last truncate any empty decimal places
-        /*
-        while ((decimals > 0) and (mantissa != 0L) and ((mantissa % 10) == 0L)) {
-            //mantissa = (mantissa+5) / 10
-            mantissa /= 10
-            decimals--
-        }*/
-
-        if (isnegative) mantissa = 0-mantissa
-
-        return Pair(mantissa, if (mantissa == 0L)  0 else decimals)
-    }
-
     private fun normalize(mant:Long, deci:Int): Pair<Long, Int>{
         var mantissa = mant
         var decimals = if (mantissa == 0L) 0; else deci
@@ -193,51 +160,6 @@ public open class Decimal : Number, Comparable<Decimal> {
 
         return Pair(newmantissa, if (newmantissa == 0L)  0 else newdecimals)
     }
-
-
-
-
-
-    /*
-    public fun roundHalfEven(localprecision: Int = 3, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
-        val (mant, deci) = unpack64()
-        var mantissa = mant
-        var decimals = deci
-        val maxdecimals = min(localprecision, 15)
-        while (decimals > maxdecimals) {
-            if ((mantissa == 0L) or (decimals == 0)) break
-
-            // https://lemire.me/blog/2020/04/16/rounding-integers-to-even-efficiently/
-            // https://github.com/lemire/Code-used-on-Daniel-Lemire-s-blog/blob/master/2020/04/16/round.c
-            // numerator n = mantissa, divisor d = 10, ist das richtig?
-            var divisor: Long = 10
-            var offsetnumerator = (mantissa + (divisor / 2))
-            var roundup = (offsetnumerator / divisor)
-            var down = roundup - (roundup and 1)
-            var ismultiple = if ((offsetnumerator % divisor) == 0L) 1L; else 0L
-             //mantissa = if (ismultiple && iseven) roundup - (roundup and 1) else roundup
-            mantissa = (divisor  or (roundup xor ismultiple)) and roundup;
-            decimals--
-        }
-        return Decimal(mantissa, if (mantissa == 0L)  0 else decimals)
-    }
-    */
-
-
-    /*
-    public fun round(localprecision: Int, roundingMode: RoundingMode = RoundingMode.HALF_UP): Decimal {
-        val (mant, deci) = unpack64()
-        var mantissa = mant
-        var decimals = deci
-        val maxdecimals = min(localprecision, 15)
-        while (decimals > maxdecimals) {
-            if ((mantissa == 0L) or (decimals == 0)) break
-            mantissa = (mantissa+5) / 10
-            decimals--
-        }
-        return Decimal(mantissa, if (mantissa == 0L)  0 else decimals)
-    }
-    */
 
 
     public fun setScale(desiredprecision: Int, rounding: RoundingMode = autoRoundingMode): Decimal {
@@ -423,19 +345,6 @@ public open class Decimal : Number, Comparable<Decimal> {
     public fun toUShort(): UShort = shiftedMantissa().toUShort()
     public fun toUByte(): UByte = shiftedMantissa().toUByte()
 
-
-
-    /* how to round an integer
-
-      Example: to next thousand (step = 1000)
-      int offset = (number >= 0) ? (step / 2) : -(step/2);
-      int roundedNumber = ((number + offset) / step) * step;
-
-      missing: shiftplaces muss mit einfließen (step shiftmult. mit shiftplaces?)
-
-      fun shiftmult: mult mit 10^shift
-
-       */
 
     public fun toPlainString() : String {
         val (mantissa, decimals) = unpack64()
