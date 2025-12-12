@@ -11,24 +11,52 @@ public open class Decimal : Number, Comparable<Decimal> {
     // 60bit long mantissa plus 4 Bit int exponent (decimal places):
     private var decimal64: Long = 0L
 
-    internal fun getDecimal64() : Long = decimal64
+    // internal fun getDecimal64() : Long = decimal64
 
-    internal fun unpack64(): Pair<Long, Int> {
+    private fun unpack64(): Pair<Long, Int> {
         val decimals: Int = (decimal64 and 0x0FL).toInt()
         val mantissa: Long = (decimal64 shr 4)
         return Pair(mantissa, decimals)
     }
 
-    internal fun pack64(mantissa: Long, decimals: Int, omitNormalize:Boolean = false): Long {
+    private fun pack64(mantissa: Long, decimals: Int, omitNormalize:Boolean = false): Long {
         var compactMantissa = mantissa
         var compactDecimalPlaces = decimals
         if ((decimals != 0) and !(omitNormalize)) {
-            //val (cm, cd) = normalizeDecimalPlaces(mantissa, decimals)
             val (cm, cd) = normalize(mantissa, decimals)
             compactMantissa = cm
             compactDecimalPlaces = cd
         }
         return ((compactMantissa shl 4) or (compactDecimalPlaces and 0x0F).toLong())
+    }
+
+    private fun normalize(mant:Long, deci:Int): Pair<Long, Int>{
+        var mantissa = mant
+        var decimals = if (mantissa == 0L) 0; else deci
+        val maxdecimals = min(autoPrecision, 15)
+
+        // most important, correct negative decimal places, as we don't support them!
+        while (decimals < 0) {
+            mantissa *=10
+            decimals++
+        }
+        // truncate any empty decimal places
+        while ((decimals > 0) and (mantissa != 0L) and ((mantissa % 10) == 0L)) {
+            //mantissa = (mantissa+5) / 10
+            mantissa /= 10
+            decimals--
+        }
+        // now round if required
+        var (newmantissa, newdecimals) = roundWithMode(mantissa, decimals, maxdecimals, autoRoundingMode)
+
+        // again truncate any empty decimal places that have come though rounding
+        while ((newdecimals > 0) and (newmantissa != 0L) and ((newmantissa % 10) == 0L)) {
+            //mantissa = (mantissa+5) / 10
+            newmantissa /= 10
+            newdecimals--
+        }
+
+        return Pair(newmantissa, if (newmantissa == 0L)  0 else newdecimals)
     }
 
 
@@ -130,35 +158,6 @@ public open class Decimal : Number, Comparable<Decimal> {
         }
 
         return EqualizedDecimals(thismantissa, thatmantissa, thisdecimals)
-    }
-
-    private fun normalize(mant:Long, deci:Int): Pair<Long, Int>{
-        var mantissa = mant
-        var decimals = if (mantissa == 0L) 0; else deci
-        val maxdecimals = min(autoPrecision, 15)
-
-        // most important, correct negative decimal places, as we don't support them!
-        while (decimals < 0) {
-            mantissa *=10
-            decimals++
-        }
-        // truncate any empty decimal places
-        while ((decimals > 0) and (mantissa != 0L) and ((mantissa % 10) == 0L)) {
-            //mantissa = (mantissa+5) / 10
-            mantissa /= 10
-            decimals--
-        }
-        // now round if required
-        var (newmantissa, newdecimals) = roundWithMode(mantissa, decimals, maxdecimals, autoRoundingMode)
-
-        // again truncate any empty decimal places that have come though rounding
-        while ((newdecimals > 0) and (newmantissa != 0L) and ((newmantissa % 10) == 0L)) {
-            //mantissa = (mantissa+5) / 10
-            newmantissa /= 10
-            newdecimals--
-        }
-
-        return Pair(newmantissa, if (newmantissa == 0L)  0 else newdecimals)
     }
 
 

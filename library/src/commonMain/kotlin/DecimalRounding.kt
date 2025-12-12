@@ -14,7 +14,7 @@ internal fun getDivisor(roundingMode: Decimal.RoundingMode, pos: Boolean) : Pair
         Decimal.RoundingMode.DOWN -> return Pair(0, 0)
         Decimal.RoundingMode.CEILING -> return if (pos) Pair(10, -1) else Pair(0, 0)
         Decimal.RoundingMode.FLOOR -> return if (pos) Pair(0, 0) else Pair(-10, 1)
-        Decimal.RoundingMode.HALF_UP -> return if (pos) Pair(5, -0) else Pair(-5, 0)
+        Decimal.RoundingMode.HALF_UP -> return if (pos) Pair(5, 0) else Pair(-5, 0)
         Decimal.RoundingMode.HALF_DOWN -> return if (pos) Pair(5, -1) else Pair(-5, 1)
         Decimal.RoundingMode.HALF_EVEN -> return  if (pos) Pair(5, -0) else Pair(-5, 0)
         Decimal.RoundingMode.UNNECESSARY -> return Pair(0, 0)
