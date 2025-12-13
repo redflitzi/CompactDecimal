@@ -1,6 +1,12 @@
-package io.github.redflitzi.compactdecimal
+package io.github.astridha.decimal
 
 public fun abs(d: Decimal) : Decimal = d.abs()
+public fun round(d: Decimal) : Decimal = d.setScale(0)
+public fun ceil(d: Decimal) : Decimal = d.setScale(0, Decimal.RoundingMode.CEILING)
+public fun floor(d: Decimal) : Decimal = d.setScale(0, Decimal.RoundingMode.FLOOR)
+public fun max(a: Decimal, b:Decimal) : Decimal = if (a > b) a; else b
+public fun min(a: Decimal, b:Decimal) : Decimal = if (a < b) a; else b
+public fun sign(d: Decimal) : Decimal = d.sign
 
 public fun String.toDecimal():Decimal = Decimal(this)
 public fun Float.toDecimal():Decimal = Decimal(this)

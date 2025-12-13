@@ -1,6 +1,8 @@
-package io.github.redflitzi.compactdecimal
+@file:Suppress("ClassName")
 
-import io.github.redflitzi.compactdecimal.Decimal.Companion.getRoundingMode
+package io.github.astridha.decimal
+
+import io.github.astridha.decimal.Decimal.Companion.getRoundingMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,52 +18,52 @@ class Rounding_UP_Tests {
         assertEquals(
             "6",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "3",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "2",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-2",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-2",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-3",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-6",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -75,52 +77,52 @@ class Rounding_DOWN_Tests {
         assertEquals(
             "5",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "2",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "1",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "1",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-1",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-1",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-2",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-5",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -134,52 +136,52 @@ class Rounding_CEILING_Tests {
         assertEquals(
             "6",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "3",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "2",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-1",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-1",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-2",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-5",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -193,52 +195,52 @@ class Rounding_FLOOR_Tests {
         assertEquals(
             "5",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "2",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "1",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "1",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-2",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-2",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-3",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-6",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -252,52 +254,52 @@ class Rounding_HALF_UP_Tests {
         assertEquals(
             "6",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "3",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "1",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-1",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-2",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-3",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-6",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -311,52 +313,52 @@ class Rounding_HALF_DOWN_Tests {
         assertEquals(
             "5",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "2",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "1",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-1",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-2",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-2",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-5",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
@@ -372,59 +374,59 @@ class Rounding_HALF_EVEN_Tests {
         assertEquals(
             "6",
             "5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  5.5"
+            "${getRoundingMode()} round(0)  5.5"
         )
         assertEquals(
             "2",
             "2.5".Dc.setScale(0).toPlainString(),
-            "H${Decimal.getRoundingMode()} round(0)  2.5"
+            "H${getRoundingMode()} round(0)  2.5"
         )
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.6"
+            "${getRoundingMode()} round(0)  1.6"
         )
         assertEquals(
             "1",
             "1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.1"
+            "${getRoundingMode()} round(0)  1.1"
         )
         assertEquals(
             "1",
             "1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  1.0"
+            "${getRoundingMode()} round(0)  1.0"
         )
         assertEquals(
             "-1",
             "-1.0".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.0"
+            "${getRoundingMode()} round(0)  -1.0"
         )
         assertEquals(
             "-1",
             "-1.1".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.1"
+            "${getRoundingMode()} round(0)  -1.1"
         )
         assertEquals(
             "-2",
             "-1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -1.6"
+            "${getRoundingMode()} round(0)  -1.6"
         )
         assertEquals(
             "-2",
             "-2.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -2.5"
+            "${getRoundingMode()} round(0)  -2.5"
         )
         assertEquals(
             "-6",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} round(0)  -5.5"
+            "${getRoundingMode()} round(0)  -5.5"
         )
     }
 }
 
 
 
-class XRounding_UP_Tests {
+class OtherRounding_xUP_Tests {
 
     @Test
     fun decimalRoundingTests_UP() {
@@ -433,7 +435,7 @@ class XRounding_UP_Tests {
         assertEquals(
             "5600",
             "5555.12".Dc.setScale(-2).toPlainString(),
-            "${Decimal.getRoundingMode()} round(-2)  5555.12 => 5600"
+            "${getRoundingMode()} round(-2)  5555.12 => 5600"
         )
         assertEquals(
             "5100",
@@ -453,22 +455,22 @@ class XRounding_UP_Tests {
         assertEquals(
             "-5600",
             "-5555.12".Dc.setScale(-2).toPlainString(),
-            "${Decimal.getRoundingMode()} round(-2)  -5555.12 => -5600"
+            "${getRoundingMode()} round(-2)  -5555.12 => -5600"
         )
         assertEquals(
             "-5100",
             "-5000.02".Dc.setScale(-2).toPlainString(),
-            "${Decimal.getRoundingMode()} round(-2)  -5000.02 => -5100"
+            "${getRoundingMode()} round(-2)  -5000.02 => -5100"
         )
         assertEquals(
             "-5000",
             "-5000.00".Dc.setScale(-2).toPlainString(),
-            "${Decimal.getRoundingMode()} round(-2)  -5000.00 => -5000"
+            "${getRoundingMode()} round(-2)  -5000.00 => -5000"
         )
         assertEquals(
             "-6",
             "-5.5".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} perator -5.5=> -6"
+            "${getRoundingMode()} operator -5.5=> -6"
         )
         assertEquals(
             "3",
@@ -478,12 +480,12 @@ class XRounding_UP_Tests {
         assertEquals(
             "2",
             "1.6".Dc.setScale(0).toPlainString(),
-            "${Decimal.getRoundingMode()} perator 1.6 => 2"
+            "${getRoundingMode()} operator 1.6 => 2"
         )
         assertEquals(
             "2",
             "1.1".Dc.setScale(0, Decimal.RoundingMode.UP).toPlainString(),
-            "${Decimal.getRoundingMode()} operator 1.1 => 2, ${getRoundingMode()}"
+            "${getRoundingMode()} operator 1.1 => 2, ${getRoundingMode()}"
         )
         assertEquals(
             "1",
@@ -506,12 +508,6 @@ class ArithmeticRoundingTest {
 
         /*
 
-        d=13.7777.Dc.roundHalfEven()
-        assertEquals(
-            "13.778",
-            d.roundHalfEven().toPlainString(),
-            "operator roundingHalfEven(13.7777.Dc)"
-        )
 
         d=13.7777.Dc.roundHalfEven()
         assertEquals(
@@ -549,7 +545,7 @@ class ArithmeticRoundingTest {
     class otherRounding_HALF_EVEN_Tests {
 
         @Test
-        fun otherdecimalRoundingTests_HALF_EVEN() {
+        fun otherDecimalRoundingTests_HALF_EVEN() {
             Decimal.setRoundingMode(Decimal.RoundingMode.HALF_EVEN)
             //Decimal.setPrecision(0)
             assertEquals(
@@ -571,6 +567,11 @@ class ArithmeticRoundingTest {
                 "-106",
                 "-106.5".Dc.setScale(0).toPlainString(),
                 "HALF_EVEN round(0)  -106.5 => -106"
+            )
+            assertEquals(
+                "13.778",
+                13.7777.Dc.setScale(3).toPlainString(),
+                "operator roundingHalfEven(13.7777.Dc)"
             )
         }
     }

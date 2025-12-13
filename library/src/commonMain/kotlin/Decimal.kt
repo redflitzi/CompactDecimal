@@ -1,7 +1,8 @@
-package io.github.redflitzi.compactdecimal
+package io.github.astridha.decimal
 
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.sign
 
 //import kotlin.reflect.jvm.jvmName
 
@@ -21,13 +22,13 @@ public open class Decimal : Number, Comparable<Decimal> {
 
     private fun pack64(mantissa: Long, decimals: Int, omitNormalize:Boolean = false): Long {
         var compactMantissa = mantissa
-        var compactDecimalPlaces = decimals
+        var decimalPlaces = decimals
         if ((decimals != 0) and !(omitNormalize)) {
             val (cm, cd) = normalize(mantissa, decimals)
             compactMantissa = cm
-            compactDecimalPlaces = cd
+            decimalPlaces = cd
         }
-        return ((compactMantissa shl 4) or (compactDecimalPlaces and 0x0F).toLong())
+        return ((compactMantissa shl 4) or (decimalPlaces and 0x0F).toLong())
     }
 
     private fun normalize(mant:Long, deci:Int): Pair<Long, Int>{
@@ -138,6 +139,12 @@ public open class Decimal : Number, Comparable<Decimal> {
         val (mantissa, decimals) = unpack64()
         return Decimal(0-mantissa, decimals)
     }
+    public val sign : Decimal
+        get() {
+            val (mantissa, _) = unpack64()
+            val msign = mantissa.sign
+            return Decimal(msign)
+        }
 
     internal data class EqualizedDecimals(val thism:Long, val thatm: Long, val deci: Int)
     internal fun equalizeDecimals(thism:Long, thisd: Int, thatm: Long, thatd: Int): EqualizedDecimals {

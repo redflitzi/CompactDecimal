@@ -1,4 +1,4 @@
-package io.github.redflitzi.compactdecimal
+package io.github.astridha.decimal
 
 internal fun getPower10(exponent: Int) : Long { // only for between 0 and 16!!!
     var power: Long = 1

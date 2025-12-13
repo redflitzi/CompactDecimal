@@ -11,7 +11,7 @@ plugins {
     // id("org.jetbrains.kotlin.kapt")
 }
 
-group = "io.github.redflitzi"
+group = "io.github.astridha"
 //artifact="compact-decimal"
 version = "1.0.0"
 
@@ -25,7 +25,7 @@ kotlin {
     //@Suppress("UnstableApiUsage")
     // androidLibrary {
     android {
-        namespace = "io.github.redflitzi.compactdecimal"
+        namespace = "io.github.astridha.decimal"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -36,7 +36,7 @@ kotlin {
         }
 /*
         defaultConfig {
-            //applicationId = "io.github.redflitzi.compactdecimal"
+            //applicationId = "io.github.astridha.decimal"
             minSdk = 31
             //targetSdk = 34
             //versionCode = 1
@@ -105,10 +105,10 @@ mavenPublishing {
     coordinates(group.toString(), "compact-decimal", version.toString())
 
     pom {
-        name = "CompactDecimal Library"
+        name = "decimal Library"
         description = "Multiplatform Decimal library."
         inceptionYear = "2025"
-        url = "https://github.com/redflitzi/CompactDecimal/"
+        url = "https://github.com/astridha/decimal/"
         licenses {
             license {
                 name = "XXX"

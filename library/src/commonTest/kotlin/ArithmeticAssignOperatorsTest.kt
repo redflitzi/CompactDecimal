@@ -1,6 +1,6 @@
-package io.github.redflitzi.compactdecimal
+package io.github.astridha.decimal
 
-import io.github.redflitzi.compactdecimal.*
+import io.github.astridha.decimal.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

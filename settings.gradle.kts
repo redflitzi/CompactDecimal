@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "io.github.redflitzi.compactdecimal"
+rootProject.name = "io.github.astridha.decimal"
 include(":library")

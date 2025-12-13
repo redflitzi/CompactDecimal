@@ -1,4 +1,4 @@
-# Compact Decimal
+# Decimal type on a 64bit footprint
 
 ### A compact Decimal class with small exponents and a predictive, smaller footprint than BigDecimal.  
 
@@ -31,7 +31,7 @@ better use: *"15.000000000000001".Dc*. This is a String constructor and avoids t
 
 ### Import
 ``` kotlin
-import io.github.redflitzi.compactdecimal.*
+import io.github.astridha.decimal.*
 ```
 
 
@@ -56,7 +56,7 @@ Use maven dependency:
 
 ```xml
 <dependency>
-    <groupId>io.github.redflitzi</groupId>
+    <groupId>io.github.astridha</groupId>
     <artifactId>compact-decimal</artifactId>
     <version>1.0.0</version>
 </dependency>
